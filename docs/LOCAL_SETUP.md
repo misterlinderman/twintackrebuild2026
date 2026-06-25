@@ -1,0 +1,174 @@
+# Local Setup Guide — TwinTack Rebuild 2026
+
+Replicate production behavior in the Local by Flywheel development environment.
+
+## Prerequisites
+
+- [Local by Flywheel](https://localwp.com/) installed
+- Site created: **twintack-rebuild-2026** (PHP 8.x, preferred web server)
+- This repo cloned or initialized at `app/public/wp-content/`
+- Access to production hosting (database export, `wp-content/uploads/`, SFTP)
+
+## Environment overview
+
+| Item | Local value | Production |
+|------|-------------|------------|
+| Site name | twintack-rebuild-2026 | twintack.com |
+| WP root | `.../app/public/` | hosting docroot |
+| Repo root | `.../app/public/wp-content/` | same relative path |
+| Database | `local` / `root` / `root` | hosting credentials |
+| URL | `https://twintack-rebuild-2026.local` (verify in Local) | `https://twintack.com` |
+
+Open the site URL from Local's site overview panel after starting the site.
+
+## Step 1 — WordPress baseline
+
+Local provides WordPress core and `wp-config.php`. Confirm:
+
+- WordPress version is current stable (match production major version if possible)
+- Permalinks: **Settings → Permalinks → Post name**
+- PHP memory limit ≥ 256M (Local site settings if needed)
+
+## Step 2 — Install third-party plugins
+
+Install plugins documented in [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md). Typical production stack:
+
+1. **WooCommerce** — match production version
+2. **Advanced Custom Fields PRO** — install from license zip; import field groups if not in DB
+3. **WooCommerce Stripe Gateway** — install; use test API keys locally
+4. Any other plugins marked "keep" in the inventory
+
+Do not commit these to Git. Update `PLUGIN_INVENTORY.md` with installed versions.
+
+## Step 3 — Port custom theme and plugins
+
+Follow [MIGRATION_CHECKLIST.md](MIGRATION_CHECKLIST.md). After copying:
+
+1. Activate `twintack2025` (or renamed successor) under **Appearance → Themes**
+2. Activate custom TwinTack plugins under **Plugins**
+3. Resolve fatal errors before proceeding (check `logs/php/error.log` in Local site folder)
+
+## Step 4 — Import production database
+
+### Export from production
+
+Use one of:
+
+- **Hosting panel** (SiteGround, WP Engine, etc.) — phpMyAdmin or backup tool
+- **WP-CLI** on server: `wp db export twintack-production.sql`
+- **Plugin** — WP Migrate, All-in-One WP Migration (export without media first for speed)
+
+### Import to Local
+
+**Option A — Local's Adminer (recommended for first import)**
+
+1. Local → Site → Database → Open Adminer
+2. Select database `local`
+3. Import → choose `.sql` file
+4. Wait for completion (large WooCommerce DBs may take several minutes)
+
+**Option B — WP-CLI**
+
+```bash
+cd "/Volumes/A&D/Dropbox/Development/Local/twintack-rebuild-2026/app/public"
+wp db import /path/to/twintack-production.sql
+```
+
+### Search-replace URLs
+
+After import, replace production URLs with the Local URL:
+
+```bash
+wp search-replace 'https://twintack.com' 'https://twintack-rebuild-2026.local' --all-tables
+wp search-replace 'http://twintack.com' 'https://twintack-rebuild-2026.local' --all-tables
+```
+
+Verify with:
+
+```bash
+wp option get siteurl
+wp option get home
+```
+
+### Sanitization (recommended)
+
+Before import, or immediately after:
+
+- Replace admin email with a dev address
+- Disable or reconfigure SMTP (avoid sending real customer emails)
+- Set WooCommerce Stripe to **test mode**
+- Disable Make.com / webhook plugins or redirect to staging URLs
+- Remove or anonymize customer PII if not needed for your test cases
+
+## Step 5 — Import media (uploads)
+
+Production media is **not in Git**. Copy the uploads directory:
+
+```bash
+# From production backup or SFTP download
+rsync -avz --progress /path/to/production/wp-content/uploads/ \
+  "/Volumes/A&D/Dropbox/Development/Local/twintack-rebuild-2026/app/public/wp-content/uploads/"
+```
+
+Or use WP Migrate / All-in-One WP Migration media addon for integrated transfer.
+
+After copy, regenerate thumbnails if needed:
+
+```bash
+wp media regenerate --yes
+```
+
+## Step 6 — WooCommerce-specific setup
+
+1. **Settings → General** — confirm timezone and currency (USD)
+2. **WooCommerce → Settings → Advanced → Page setup** — verify cart/checkout/my-account pages exist
+3. **Products** — spot-check variable products and custom grip products
+4. **Payment gateways** — Stripe test keys only
+5. **Shipping zones** — confirm rates load (may need API keys for live rate plugins)
+6. Flush rewrite rules: `wp rewrite flush`
+
+## Step 7 — Verify parity
+
+Walk through these flows locally:
+
+- [ ] Homepage loads with hero, featured products, and footer
+- [ ] Shop archive and single product pages
+- [ ] Add variable product to cart and reach checkout (test mode)
+- [ ] Custom grip product/configurator (if applicable)
+- [ ] My Account login (reset password for imported users or create test customer)
+- [ ] Key static pages: Our Story, Technology, Contact
+
+## Step 8 — Enable debugging (development only)
+
+In `wp-config.php` (Local-managed, not in repo):
+
+```php
+define( 'WP_DEBUG', true );
+define( 'WP_DEBUG_LOG', true );
+define( 'WP_DEBUG_DISPLAY', false );
+define( 'SCRIPT_DEBUG', true );
+```
+
+Logs: `app/public/wp-content/debug.log`
+
+## Troubleshooting
+
+| Issue | Fix |
+|-------|-----|
+| White screen after import | Check PHP error log; often missing plugin or PHP version mismatch |
+| Broken images | Incomplete uploads sync; verify `uploads/` year folders |
+| Mixed content / CSS broken | Run URL search-replace; check `siteurl` and `home` options |
+| 404 on product pages | Flush permalinks: Settings → Permalinks → Save |
+| ACF fields empty | DB import incomplete or ACF Pro not activated |
+| Stripe errors on checkout | Expected with live keys — switch to test mode |
+
+## Ongoing sync
+
+For fresh production data during development:
+
+1. Export new DB snapshot (schedule weekly or before major testing)
+2. Re-import to Local (backup local DB first if you have test orders)
+3. Rsync changed uploads only
+4. Re-run URL search-replace if needed
+
+Do not commit database dumps to this repository.

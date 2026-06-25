@@ -1,0 +1,54 @@
+# Media and generated content (import separately, never commit)
+uploads/
+upgrade/
+backup-db/
+cache/
+backups/
+wflogs/
+
+# Default WordPress themes (core bundles, not custom code)
+themes/twentytwenty*/
+themes/twentytwentyfive/
+themes/twentytwentyfour/
+themes/twentytwentythree/
+
+# Third-party plugin installs (install via Composer, zip, or WP admin)
+# Track only TwinTack custom plugins and pinned config — see docs/PLUGIN_INVENTORY.md
+plugins/woocommerce/
+plugins/woocommerce-*/
+plugins/advanced-custom-fields*/
+plugins/*/*.zip
+
+# Secrets and environment
+.env
+.env.*
+!.env.example
+wp-config.php
+wp-config-*.php
+
+# Dependencies
+node_modules/
+vendor/
+
+# IDE and OS
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+._*
+Thumbs.db
+
+# Build artifacts
+*.css.map
+*.sass-cache/
+dist/
+build/
+
+# Logs and temp
+*.log
+debug.log
+error_log
+*.swp
+*.swo
+*~

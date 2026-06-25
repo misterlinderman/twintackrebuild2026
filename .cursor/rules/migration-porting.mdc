@@ -1,0 +1,38 @@
+---
+description: Guidelines for porting files from legacy twintack repo and production
+globs: docs/**/*
+alwaysApply: false
+---
+
+# Migration and Porting Rules
+
+When helping port code from https://github.com/misterlinderman/twintack or production:
+
+## Port order
+
+1. Theme (`twintack2025`) → 2. Custom plugins → 3. Third-party plugins (install, don't copy) → 4. DB + uploads
+
+## Do not port
+
+- `twintack2025-previous` (unless extracting specific code)
+- Duplicate plugin version folders (`twintack-grip-manager 1-4-2`, etc.)
+- Committed WooCommerce/ACF vendor trees
+- One-off debug scripts unless moved to `tools/` with local-only warnings
+- `wp-config*.php`, `.env`, credentials
+
+## After porting
+
+- Run URL audit: search for `twintack.com` in theme/plugin source
+- Verify plugin activation without fatal errors
+- Update `docs/PLUGIN_INVENTORY.md`
+- Suggest `wp search-replace` for DB after import (see `docs/LOCAL_SETUP.md`)
+
+## Database and media
+
+- Guide user to import via Local Adminer or WP-CLI — never commit SQL dumps
+- Stripe: test mode locally
+- Disable or redirect production webhooks (Make.com, etc.)
+
+## Suggest branch
+
+Port work belongs on `migration/*` branches, merged to `develop` when parity is verified.

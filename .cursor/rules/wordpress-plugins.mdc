@@ -1,0 +1,34 @@
+---
+description: TwinTack custom plugin development and consolidation rules
+globs: plugins/**/*
+alwaysApply: false
+---
+
+# Custom Plugin Rules
+
+Only TwinTack-authored plugins belong in `plugins/`. Third-party plugins are installed via WP admin and documented in `docs/PLUGIN_INVENTORY.md`.
+
+## Consolidation (porting from legacy repo)
+
+- Copy **one** canonical folder per plugin (production-active version)
+- Directory names: lowercase, hyphens, no version suffix (e.g. `twintack-grip-manager`)
+- Merge features from duplicate legacy folders before deleting extras
+- Bump `Version:` in plugin header after consolidation
+
+## Code standards
+
+- Follow WordPress Plugin Handbook: activation/deactivation hooks, namespaced or prefixed functions
+- Prefix: `twintack_` or existing plugin prefix — check before adding new functions
+- Admin UI: use WP admin styles, nonces, capability checks
+- No secrets in source — use `wp-config.php` constants or options API
+
+## WooCommerce integration
+
+- Use WC hooks and CRUD APIs — avoid direct `$wpdb` unless existing pattern requires it
+- Test with variable products and custom product types after changes
+
+## Before removing a plugin
+
+1. Confirm inactive on production (`wp plugin list` or admin check)
+2. Search theme and other plugins for dependencies
+3. Update `docs/PLUGIN_INVENTORY.md` with removal rationale

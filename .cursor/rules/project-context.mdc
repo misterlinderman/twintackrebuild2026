@@ -1,0 +1,35 @@
+---
+description: TwinTack rebuild project context and scope boundaries
+alwaysApply: true
+---
+
+# TwinTack Rebuild 2026 — Project Context
+
+This repo is the **wp-content** root for Local site `twintack-rebuild-2026`. Production: https://twintack.com/. Legacy reference: https://github.com/misterlinderman/twintack.
+
+## Scope
+
+- **In scope:** Custom theme (`themes/twintack2025/`), TwinTack custom plugins (`plugins/twintack-*`), docs, Cursor rules
+- **Out of scope:** WordPress core, `uploads/`, third-party plugins (WooCommerce, ACF Pro), secrets
+
+## Principles
+
+1. One canonical version per custom plugin — no version-suffixed duplicate folders
+2. Minimize diff scope — focused changes only
+3. Match existing PHP/JS conventions in ported code before refactoring
+4. Test changes in Local before suggesting production deploy
+5. Update `docs/PLUGIN_INVENTORY.md` when adding or removing plugins
+
+## Before editing ported files
+
+Read `docs/PROJECT_INTENT.md` and `docs/MIGRATION_CHECKLIST.md`. When consolidating legacy code, prefer merging into existing files over creating parallel implementations.
+
+## Local paths
+
+- Repo root: `wp-content/` (this directory)
+- WordPress root: `../` (parent — core and wp-config.php, not in Git)
+- Local site: `/Volumes/A&D/Dropbox/Development/Local/twintack-rebuild-2026/`
+
+## Do not commit
+
+Database dumps, API keys, Stripe credentials, license keys, customer PII, or media files.

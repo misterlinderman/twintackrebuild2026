@@ -1,0 +1,33 @@
+---
+description: TwinTack WordPress theme development conventions
+globs: themes/**/*
+alwaysApply: false
+---
+
+# Theme Development Rules
+
+Active theme: `themes/twintack2025/` (WooCommerce + ACF).
+
+## Conventions
+
+- Use WordPress APIs: `get_template_part()`, `wp_enqueue_script/style`, hooks — no direct file includes for templates
+- WooCommerce overrides belong in `themes/twintack2025/woocommerce/` mirroring plugin template paths
+- ACF field groups: prefer JSON sync in `acf-json/` when the theme owns field definitions
+- Use `home_url()`, `get_template_directory_uri()` — never hardcode `twintack.com`
+- Prefix custom functions: `twintack_` or match existing theme prefix
+
+## Asset changes
+
+- Check for existing build pipeline (`package.json`) before editing compiled CSS/JS
+- Enqueue in `functions.php` or dedicated inc file — match existing pattern
+- Do not add new CSS frameworks unless requested
+
+## When refactoring ported code
+
+1. Preserve behavior first, simplify second
+2. Do not delete WooCommerce template overrides without verifying no local override exists
+3. Document removed templates in commit message
+
+## Testing checklist
+
+Homepage, shop archive, single product, cart/checkout, custom grip flows, mobile nav.
