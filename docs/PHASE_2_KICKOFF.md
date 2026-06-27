@@ -1,6 +1,6 @@
 # Phase 2 Kickoff — Replace Gravity Forms Intake
 
-**Status:** Ready to begin (2026-06-27)  
+**Status:** In progress (2026-06-27) — native intake scaffold verified; theme GF workarounds removed  
 **Prerequisite:** Phase 1 merged to `main` — Make.com / Monday.com integrations removed  
 **Branch naming:** `consolidation/phase-2-native-grip-intake`
 
@@ -120,23 +120,27 @@ On production (or from DB export):
 
 Build in `twintack-custom-grips`:
 
-- [ ] New template partial (e.g. `templates/partials/customer-intake-form.php`) or shortcode/block
-- [ ] AJAX handler in `class-custom-grips-ajax.php` — validate, handle file upload via WP media
-- [ ] On success: populate `grip_design_data` cart metadata (same shape as GF handlers) and redirect to cart
-- [ ] Require logged-in customer (match current GF behavior)
-- [ ] Reuse validation rules from configurator (colors conditional on layout, quantity min, file types)
+- [x] New template partial (e.g. `templates/partials/customer-intake-form.php`) or shortcode/block
+- [x] AJAX handler — validate, handle file upload via WP media (`TTCG_Intake`, action `ttcg_submit_grip_intake`)
+- [x] On success: populate `grip_design_data` cart metadata (same shape as GF handlers) and redirect to cart
+- [x] Require logged-in customer (match current GF behavior)
+- [x] Validation rules from configurator (colors conditional on layout, quantity 25–1000, file types)
+- [x] Legacy `[gravityform id="8|9"]` shortcodes replaced at render time
 
 ### Step 3 — Port deposit logic (minimal move)
 
-Option A (recommended for Phase 2): Keep WC hooks in Grip Manager; Custom Grips AJAX calls shared helper or fires action `ttcg_grip_intake_submitted` that Grip Manager listens for.
+Option A (recommended for Phase 2): Keep WC hooks in Grip Manager; Custom Grips AJAX calls shared helper or fires action `ttcg_grip_intake_submitted` that Grip Manager listens for. **Done** — Grip Manager hooks active; GF optional locally.
 
-Option B: Move all of `class-grip-form-handler.php` cart/order logic into Custom Grips (blurs Phase 2/3 boundary).
+Option B: Move all of `class-grip-form-handler.php` cart/order logic into Custom Grips (blurs Phase 2/3 boundary). **Deferred to Phase 3.**
 
 ### Step 4 — Theme integration
 
-- [ ] Replace GF embed in grip form templates with native partial render
-- [ ] Update configurator JS to target native form selectors
-- [ ] Remove GF script/style enqueues
+- [x] Replace GF embed in `template-gripform-clean.php` with native partial render
+- [x] Replace GF embed in `template-gripform.php` with native partial render
+- [x] Update configurator JS to target native form selectors (`.ttcg-customer-intake`)
+- [x] Remove GF script/style enqueues and `gform_after_submission` debug from theme
+- [x] Marketing script isolation applies to all grip intake contexts (not only clean template)
+- [ ] Remove `_gravity-forms.css` when no GF pages remain (Phase 2 cutover)
 
 ### Step 5 — Local testing
 
@@ -145,7 +149,9 @@ Use [PARITY_TESTING.md](PARITY_TESTING.md) Step 5 flows:
 - [ ] Customer completes native form → deposit in cart
 - [ ] Checkout (sandbox) → `grip_design` post created with `artwork_pending`
 - [ ] Team dashboard shows new design
-- [ ] Existing grip posts unaffected
+- [x] Existing grip posts unaffected
+- [x] Cart metadata displays on deposit line item (Local verified 2026-06-27)
+- [x] Order processing creates `grip_design` post (`artwork_pending`) — handler verified via WP-CLI
 
 Verify:
 
@@ -196,13 +202,14 @@ Commit incrementally:
 
 ## Verification checklist (Phase 2 complete)
 
-- [ ] Customer native form submits without GF plugin active
-- [ ] Deposit product added to cart with correct metadata
-- [ ] Order processing creates `grip_design` post (`artwork_pending`)
-- [ ] Team dashboard + My Custom Grips unchanged for existing records
-- [ ] No `gform_*` / `GFAPI` in front-end code paths
-- [ ] Theme GF workarounds removed
+- [x] Customer native form submits without GF plugin active
+- [x] Deposit product added to cart with correct metadata
+- [x] Order processing creates `grip_design` post (`artwork_pending`) — programmatic test
+- [ ] Team dashboard shows new design after sandbox checkout
+- [ ] No `gform_*` / `GFAPI` in front-end code paths (theme workarounds removed; GF Importer admin remains)
+- [x] Theme GF workarounds removed from grip intake paths
 - [ ] `PLUGIN_CONSOLIDATION.md` and `PLUGIN_INVENTORY.md` updated
+- [ ] Production GF deactivation
 
 ---
 

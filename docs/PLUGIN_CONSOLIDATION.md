@@ -136,9 +136,11 @@ This plugin **gains** responsibility during consolidation:
 
 - [x] `TTCG_Intake` class — AJAX submit, cart metadata, artwork upload
 - [x] `[ttcg_grip_intake]` shortcode + `customer-intake-form.php` partial
-- [x] Theme `template-gripform-clean.php` renders native form when plugin active
-- [ ] Remove GF hooks from Grip Manager (after native form verified)
-- [ ] Remove theme GF script workarounds
+- [x] Theme `template-gripform-clean.php` and `template-gripform.php` render native form
+- [x] GF optional in Grip Manager (cart/order hooks run without GF plugin)
+- [x] Theme GF script workarounds removed from grip intake paths
+- [x] Legacy GF forms 8/9 shortcode swap at render time
+- [ ] Remove GF hooks from Grip Manager (after production GF deactivation)
 - [ ] Production GF deactivation
 
 **Prerequisite:** Document current GF form fields (forms 8/9) and map to Custom Grips form.

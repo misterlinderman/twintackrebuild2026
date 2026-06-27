@@ -55,7 +55,10 @@ $login_url    = add_query_arg( 'redirect_to', rawurlencode( $redirect_to ), site
                     </div>
                     <div class="ttcg-form-row">
                         <label for="ttcg-intake-quantity"><?php esc_html_e( 'Estimated Quantity', 'twintack-custom-grips' ); ?> <span class="ttcg-required">*</span></label>
-                        <input type="number" id="ttcg-intake-quantity" name="quantity" class="ttcg-input" min="1" value="12" required>
+                        <input type="number" id="ttcg-intake-quantity" name="quantity" class="ttcg-input"
+                               min="<?php echo esc_attr( TTCG_Intake::MIN_QUANTITY ); ?>"
+                               max="<?php echo esc_attr( TTCG_Intake::MAX_QUANTITY ); ?>"
+                               value="<?php echo esc_attr( TTCG_Intake::MIN_QUANTITY ); ?>" required>
                     </div>
                 </div>
             </div>

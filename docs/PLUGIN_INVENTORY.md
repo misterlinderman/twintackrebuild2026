@@ -22,7 +22,7 @@ Third-party plugins remain on disk for Local parity but are excluded via `.gitig
 | Plugin | Folder | Version | Purpose | Consolidation notes |
 |--------|--------|---------|---------|---------------------|
 | TwinTack Custom Grips | `twintack-custom-grips` | 1.3.0 | **Canonical** team dashboard, customer My Custom Grips, mockups, messaging, statuses, **native intake (Phase 2)** | **Foundation** — absorb Grip Manager intake + CPT over time |
-| TwinTack Grip Manager | `twintack-grip-manager` | 1.7.06 | `grip_design` CPT, WC order bridge, cart/reorder | Phase 1 complete — Make/Monday removed; GF intake remains for Phase 2 |
+| TwinTack Grip Manager | `twintack-grip-manager` | 1.7.06 | `grip_design` CPT, WC order bridge, cart/reorder | Phase 1 complete — Make/Monday removed; GF intake optional (native form Phase 2) |
 | TwinTack Manual Order Payments | `twintack-manual-order-payments` | 4.6.1 | Stripe checkout for manual/WP admin orders | Integrates with Grip Manager |
 | TwinTack Marketing | `twintack-marketing` | 1.2.0 | Homepage carousel, featured products, announcement bar | **Overlap** with theme `template-parts/marketing/v2/` — consolidate later |
 | TwinTack Enhanced Shop Filters | `twintack-enhanced-shop-filters` | 1.0.2 | Shop filtering, color swatches, sorting | Depends on WooCommerce + variation swatches |

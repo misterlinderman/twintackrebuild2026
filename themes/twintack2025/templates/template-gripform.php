@@ -92,7 +92,13 @@ img {
 <div class="iframe-form-content">
     <?php while (have_posts()) : the_post(); ?>
         <div class="container">
-            <?php the_content(); ?>
+            <?php
+            if ( class_exists( 'TTCG_Intake' ) ) {
+                TTCG_Intake::render_form();
+            } else {
+                the_content();
+            }
+            ?>
         </div>
         <?php get_template_part('template-parts/content', 'flexible'); ?>
     <?php endwhile; ?>

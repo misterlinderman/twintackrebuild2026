@@ -64,44 +64,6 @@ add_action('init', function() {
     }, 10, 3);
     
     // Clean approach - no output buffering needed since Facebook plugin is deactivated
-    
-    // Final Gravity Forms fix - runs after ALL scripts load
-    add_action('wp_footer', function() {
-        ?>
-        <script>
-        // Wait for ALL scripts to load, then fix gform
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                console.log("=== Template Gravity Forms Fix ===");
-                console.log("gform object:", typeof window.gform);
-                console.log("gform.addAction:", typeof window.gform?.addAction);
-                
-                // Fix gform.addAction if missing
-                if (typeof window.gform !== "undefined" && typeof window.gform.addAction === "undefined") {
-                    console.log("Template: Fixing gform.addAction after all scripts loaded...");
-                    window.gform.addAction = function(hook, callback, priority) {
-                        if (typeof window.jQuery !== "undefined") {
-                            window.jQuery(document).on("gform_post_render", callback);
-                        }
-                    };
-                    console.log("✓ Template: gform.addAction fixed after all scripts");
-                }
-                
-                // Re-initialize form
-                var form = document.querySelector("form[id*=\"gform_\"]");
-                if (form) {
-                    if (typeof window.jQuery !== "undefined") {
-                        window.jQuery(form).trigger("gform_post_render");
-                    }
-                    console.log("✓ Template: Form re-initialized after all scripts:", form.id);
-                }
-                
-                console.log("=== End Template Fix ===");
-            }, 1000); // Wait 1 second after page load
-        });
-        </script>
-        <?php
-    }, 999);
 }, 1);
 
 // Prevent marketing scripts from loading on this template
@@ -128,22 +90,6 @@ add_action('wp_enqueue_scripts', function() {
     wp_dequeue_script('google-tag-manager');
     wp_dequeue_script('gtm4wp');
     wp_deregister_script('gtm4wp');
-    
-    // Ensure Gravity Forms scripts are loaded for form ID 9
-    if (class_exists('GFCommon')) {
-        // Also manually enqueue the core scripts
-        wp_enqueue_script('gform_gravityforms');
-        wp_enqueue_script('gform_conditional_logic');
-        wp_enqueue_script('gform_placeholder');
-        wp_enqueue_script('gform_json');
-        wp_enqueue_script('gform_utils');
-        
-        // Enqueue Gravity Forms styles
-        wp_enqueue_style('gform_basic');
-        wp_enqueue_style('gform_theme_reset');
-        wp_enqueue_style('gform_theme_foundation');
-        wp_enqueue_style('gform_theme_framework');
-    }
 }, 999);
 
 // Prevent marketing scripts from being output in footer

@@ -362,15 +362,28 @@ function twintack_enqueue_klaviyo_script() {
 // Re-enabled with conditional loading to avoid conflicts on grip form pages
 add_action('wp_enqueue_scripts', 'twintack_enqueue_klaviyo_script');
 
+function twintack_is_grip_intake_page() {
+    if ( class_exists( 'TTCG_Intake' ) ) {
+        return TTCG_Intake::is_grip_intake_context();
+    }
+
+    return is_page_template( array(
+        'templates/template-gripform.php',
+        'templates/template-gripform-clean.php',
+    ) );
+}
+
 /**
  * Clean Grip Form Template - Script Isolation
  * Prevents marketing scripts from loading on grip configuration pages
  */
 function twintack_isolate_grip_form_scripts() {
-    // Check if we're using the clean grip form template
-    if (is_page_template('templates/template-gripform-clean.php')) {
-        // Remove all marketing scripts
-        add_action('wp_enqueue_scripts', function() {
+    if ( ! twintack_is_grip_intake_page() ) {
+        return;
+    }
+
+    // Remove all marketing scripts
+    add_action('wp_enqueue_scripts', function() {
             // Klaviyo
             wp_dequeue_script('twintack-klaviyo-newsletter');
             wp_deregister_script('twintack-klaviyo-newsletter');
@@ -412,9 +425,9 @@ function twintack_isolate_grip_form_scripts() {
             return $tag;
         }, 10, 3);
         
-        // Additional Facebook Pixel blocking via output buffering (only for clean template)
+        // Additional Facebook Pixel blocking via output buffering on grip intake pages
         add_action('template_redirect', function() {
-            if (is_page_template('templates/template-gripform-clean.php')) {
+            if ( twintack_is_grip_intake_page() ) {
                 ob_start(function($buffer) {
                     // Remove Facebook Pixel scripts
                     $buffer = preg_replace('/<script[^>]*src=["\'][^"\']*connect\.facebook\.net[^"\']*["\'][^>]*><\/script>/i', '', $buffer);
@@ -426,7 +439,7 @@ function twintack_isolate_grip_form_scripts() {
         }, 1);
         
         add_action('wp_footer', function() {
-            if (is_page_template('templates/template-gripform-clean.php') && ob_get_level()) {
+            if ( twintack_is_grip_intake_page() && ob_get_level() ) {
                 ob_end_flush();
             }
         }, 999);
@@ -440,76 +453,6 @@ function twintack_isolate_grip_form_scripts() {
                 remove_action('wp_enqueue_scripts', array('WC_Facebookcommerce_Pixel', 'enqueue_scripts'));
             }
         }, 999);
-        
-        // Fix Gravity Forms 2.9.18 Script Loading Order Issue
-        add_action('wp_enqueue_scripts', function() {
-            if (class_exists('GFForms')) {
-                // Ensure Gravity Forms scripts load early and in correct order
-                wp_enqueue_script('gform_gravityforms');
-                wp_enqueue_script('gform_conditional_logic');
-                wp_enqueue_script('gform_placeholder');
-                wp_enqueue_script('gform_json');
-                wp_enqueue_script('gform_utils');
-            }
-        }, 5); // Early priority to load before other scripts
-        
-        // Proper script enqueuing for Gravity Forms fix - runs AFTER all scripts
-        add_action('wp_footer', function() {
-            if (is_page_template('templates/template-gripform-clean.php')) {
-                ?>
-                <script>
-                // Wait for ALL scripts to load, then fix gform
-                window.addEventListener('load', function() {
-                    setTimeout(function() {
-                        console.log("=== Final Gravity Forms Fix ===");
-                        console.log("gform object:", typeof window.gform);
-                        console.log("gform.addAction:", typeof window.gform?.addAction);
-                        
-                        // Fix gform.addAction if missing
-                        if (typeof window.gform !== "undefined" && typeof window.gform.addAction === "undefined") {
-                            console.log("Fixing gform.addAction after all scripts loaded...");
-                            window.gform.addAction = function(hook, callback, priority) {
-                                if (typeof window.jQuery !== "undefined") {
-                                    window.jQuery(document).on("gform_post_render", callback);
-                                }
-                            };
-                            console.log("✓ gform.addAction fixed after all scripts");
-                        }
-                        
-                        // Also fix other methods
-                        if (typeof window.gform !== "undefined") {
-                            if (typeof window.gform.initializeOnLoaded === "undefined") {
-                                window.gform.initializeOnLoaded = function(callback) {
-                                    if (typeof window.jQuery !== "undefined") {
-                                        window.jQuery(document).ready(callback);
-                                    }
-                                };
-                            }
-                            
-                            if (typeof window.gform.addFilter === "undefined") {
-                                window.gform.addFilter = function(hook, callback, priority) {
-                                    return callback;
-                                };
-                            }
-                        }
-                        
-                        // Re-initialize form
-                        var form = document.querySelector("form[id*=\"gform_\"]");
-                        if (form) {
-                            if (typeof window.jQuery !== "undefined") {
-                                window.jQuery(form).trigger("gform_post_render");
-                            }
-                            console.log("✓ Form re-initialized after all scripts:", form.id);
-                        }
-                        
-                        console.log("=== End Final Fix ===");
-                    }, 500); // Wait 500ms after page load
-                });
-                </script>
-                <?php
-            }
-        }, 999);
-    }
 }
 add_action('template_redirect', 'twintack_isolate_grip_form_scripts');
 
@@ -1716,11 +1659,6 @@ function twintack_redirect_product_categories_to_shop() {
     }
 }
 add_action('template_redirect', 'twintack_redirect_product_categories_to_shop', 5); // Lower priority to run early
-
-// Add this to your theme's functions.php or a debugging plugin
-add_action('gform_after_submission', function($entry, $form) {
-    error_log('Form submitted: ' . print_r($entry, true));
-}, 10, 2);
 
 // Fix password reset URL to use our custom login page
 function twintack_custom_reset_password_url( $default_url, $user_id = null ) {

@@ -91,7 +91,7 @@ class TwinTack_Grip_Configurator {
             });
             
             // Check for any form-related content that might indicate this is the grip configurator
-            var formElements = document.querySelectorAll('form, .gform_wrapper, .gform_body');
+            var formElements = document.querySelectorAll('form, .ttcg-customer-intake, #ttcg-customer-intake-form, .gform_wrapper, .gform_body');
             
             // Check for any element containing "custom grip" text
             var customGripElements = Array.from(document.querySelectorAll('*')).filter(function(el) {
@@ -101,9 +101,11 @@ class TwinTack_Grip_Configurator {
             if (hasGripContent || accountRequiredElements.length > 0 || (formElements.length > 0 && customGripElements.length > 0)) {
                 // Find the best place to insert the registration prompt
                 var insertTarget = accountRequiredElements[0] || 
+                                 document.querySelector('.ttcg-customer-intake') ||
                                  document.querySelector('.entry-content') || 
                                  document.querySelector('.content') ||
                                  document.querySelector('main') ||
+                                 document.querySelector('#ttcg-customer-intake-form') ||
                                  document.querySelector('.gform_wrapper') ||
                                  document.querySelector('form');
                                  
@@ -142,7 +144,8 @@ class TwinTack_Grip_Configurator {
         
         // Check if the current page contains grip configurator content
         if ($post && (strpos($post->post_content, 'GRIP CONFIGURATOR') !== false ||
-            strpos($post->post_content, 'Account required for custom grip orders') !== false)) {
+            strpos($post->post_content, 'Account required for custom grip orders') !== false ||
+            has_shortcode($post->post_content, 'ttcg_grip_intake'))) {
             return true;
         }
         
@@ -152,6 +155,10 @@ class TwinTack_Grip_Configurator {
             strpos($post->post_content, 'custom grip') !== false ||
             strpos(strtolower($post->post_title), 'grip') !== false
         )) {
+            return true;
+        }
+
+        if (is_page_template(array('templates/template-gripform.php', 'templates/template-gripform-clean.php'))) {
             return true;
         }
         

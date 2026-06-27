@@ -20,6 +20,8 @@ class TTCG_Intake {
 
     const NONCE_ACTION = 'ttcg_intake_nonce';
     const DEPOSIT_SKU  = 'grip-design-deposit';
+    const MIN_QUANTITY = 25;
+    const MAX_QUANTITY = 1000;
 
     /**
      * @return TTCG_Intake
@@ -35,14 +37,15 @@ class TTCG_Intake {
         add_shortcode( 'ttcg_grip_intake', array( $this, 'render_shortcode' ) );
         add_action( 'wp_ajax_ttcg_submit_grip_intake', array( $this, 'handle_submit' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'maybe_enqueue_assets' ) );
+        add_filter( 'the_content', array( $this, 'replace_legacy_gravityform_shortcodes' ), 9 );
     }
 
     /**
-     * Whether the current request should load intake assets.
+     * Whether the current front-end request is a grip intake context.
      *
      * @return bool
      */
-    public function page_has_intake_form() {
+    public static function is_grip_intake_context() {
         if ( is_admin() ) {
             return false;
         }
@@ -52,11 +55,43 @@ class TTCG_Intake {
         }
 
         global $post;
-        if ( $post instanceof WP_Post && has_shortcode( $post->post_content, 'ttcg_grip_intake' ) ) {
-            return true;
+        if ( $post instanceof WP_Post ) {
+            if ( has_shortcode( $post->post_content, 'ttcg_grip_intake' ) ) {
+                return true;
+            }
+            if ( preg_match( '/\[gravityform[^\]]*id=["\']?(8|9)["\']?/i', $post->post_content ) ) {
+                return true;
+            }
         }
 
-        return (bool) apply_filters( 'ttcg_intake_enqueue_assets', false );
+        return (bool) apply_filters( 'ttcg_is_grip_intake_context', false );
+    }
+
+    /**
+     * Whether the current request should load intake assets.
+     *
+     * @return bool
+     */
+    public function page_has_intake_form() {
+        return self::is_grip_intake_context();
+    }
+
+    /**
+     * Swap legacy GF forms 8/9 shortcodes for native intake (Phase 2 cutover).
+     *
+     * @param string $content Post content.
+     * @return string
+     */
+    public function replace_legacy_gravityform_shortcodes( $content ) {
+        if ( is_admin() || ! is_string( $content ) || strpos( $content, '[gravityform' ) === false ) {
+            return $content;
+        }
+
+        return preg_replace(
+            '/\[gravityform[^\]]*id=["\']?(8|9)["\']?[^\]]*\]/i',
+            '[ttcg_grip_intake]',
+            $content
+        );
     }
 
     /**
@@ -85,6 +120,8 @@ class TTCG_Intake {
         wp_localize_script( 'ttcg-customer-intake', 'ttcgIntake', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
             'nonce'    => wp_create_nonce( self::NONCE_ACTION ),
+            'min_qty'  => self::MIN_QUANTITY,
+            'max_qty'  => self::MAX_QUANTITY,
             'strings'  => array(
                 'submitting' => __( 'Adding to cart…', 'twintack-custom-grips' ),
                 'submit'     => __( 'Continue to Cart & Pay Deposit', 'twintack-custom-grips' ),
@@ -206,8 +243,16 @@ class TTCG_Intake {
             return new WP_Error( 'missing_team', __( 'Team or school name is required.', 'twintack-custom-grips' ) );
         }
 
-        if ( $quantity < 1 ) {
-            return new WP_Error( 'missing_quantity', __( 'Please enter a valid quantity.', 'twintack-custom-grips' ) );
+        if ( $quantity < self::MIN_QUANTITY || $quantity > self::MAX_QUANTITY ) {
+            return new WP_Error(
+                'invalid_quantity',
+                sprintf(
+                    /* translators: 1: minimum quantity, 2: maximum quantity */
+                    __( 'Quantity must be between %1$d and %2$d.', 'twintack-custom-grips' ),
+                    self::MIN_QUANTITY,
+                    self::MAX_QUANTITY
+                )
+            );
         }
 
         if ( empty( $design_layout ) ) {
