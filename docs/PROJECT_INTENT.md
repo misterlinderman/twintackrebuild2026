@@ -101,8 +101,8 @@ See **[PLUGIN_CONSOLIDATION.md](PLUGIN_CONSOLIDATION.md)** for the full roadmap.
 
 | Phase | Focus | Status |
 |-------|-------|--------|
-| **1** | Retire Make.com + Monday.com dead code | **Complete** — branch pushed to GitHub |
-| **2** | Retire Gravity Forms — native Custom Grips intake | Not started |
+| **1** | Retire Make.com + Monday.com dead code | **Complete** — merged to `main` |
+| **2** | Retire Gravity Forms — native Custom Grips intake | **Ready to start** — [PHASE_2_KICKOFF.md](PHASE_2_KICKOFF.md) |
 | **3** | Merge Grip Manager → Custom Grips | Not started |
 | **4** | Theme cleanup — presentation only | Not started |
 

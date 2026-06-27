@@ -104,8 +104,8 @@ Follow [LOCAL_SETUP.md](LOCAL_SETUP.md) Steps 4–5:
 
 See [PLUGIN_CONSOLIDATION.md](PLUGIN_CONSOLIDATION.md):
 
-- [x] **Phase 1** — Retire Make.com + Monday.com dead code
-- [ ] **Phase 2** — Replace Gravity Forms with native Custom Grips intake
+- [x] **Phase 1** — Retire Make.com + Monday.com dead code (merged to `main`)
+- [ ] **Phase 2** — Replace Gravity Forms with native Custom Grips intake — see [PHASE_2_KICKOFF.md](PHASE_2_KICKOFF.md)
 - [ ] **Phase 3** — Merge Grip Manager into Custom Grips
 - [ ] **Phase 4** — Theme cleanup (presentation only)
 
@@ -118,7 +118,7 @@ Follow [PARITY_TESTING.md](PARITY_TESTING.md) for the full walkthrough.
 - [ ] Custom grip flows tested end-to-end (mockup upload, customer review, order sync)
 - [x] Team dashboard and product admin verified with production credentials
 - [x] `PLUGIN_INVENTORY.md` populated
-- [ ] Merge `consolidation/phase-1-retire-integrations` → `main` via PR
+- [x] Merge `consolidation/phase-1-retire-integrations` → `main` (2026-06-27)
 
 ## Files to leave behind (legacy repo)
 

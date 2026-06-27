@@ -8,15 +8,21 @@ alwaysApply: false
 
 **Canonical plugin:** `twintack-custom-grips` — team dashboard, My Custom Grips, statuses, mockups, messaging.
 
-**Retired (remove, do not extend):** Gravity Forms, Make.com, Monday.com.
+**Retired (Phase 1 complete):** Make.com webhooks and Monday.com REST API removed.
+
+**Phase 2 next:** Replace Gravity Forms intake — see `docs/PHASE_2_KICKOFF.md`. Do not add new `gform_*` hooks.
 
 ## Rules
 
 1. New grip workflow features go in **twintack-custom-grips**, not Grip Manager or theme `functions.php`
-2. Do not add Make.com webhook URLs, Monday REST endpoints, or `gform_*` hooks
+2. Do not add Make.com webhook URLs, Monday REST endpoints, or **new** `gform_*` hooks
 3. `_grip_artwork_status` is the single source of truth for production stage — see `plugins/twintack-custom-grips/WORKFLOW.md`
-4. Grip Manager is **legacy infrastructure** until merged — safe to remove Monday/Make code; keep CPT + WC sync until Phase 3
+4. Grip Manager is **legacy infrastructure** until Phase 3 — GF intake removal is Phase 2
 5. Historical `_grip_monday_*` meta: do not delete from DB; stop displaying in new UI
+
+## Phase 2 kickoff
+
+`docs/PHASE_2_KICKOFF.md` — GF field map, files to change, branch name `consolidation/phase-2-native-grip-intake`
 
 ## Full roadmap
 

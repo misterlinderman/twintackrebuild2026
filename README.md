@@ -78,24 +78,20 @@ Presentation           twintack2025 theme
 | Initial parity testing | Done — team dashboard, product admin, visual layout verified 2026-06-27 |
 | Checkout / full grip workflow E2E | Optional — not yet tested locally |
 
-### Consolidation roadmap
+## Consolidation roadmap
 
-See [Plugin Consolidation](docs/PLUGIN_CONSOLIDATION.md) for full detail.
+See [Plugin Consolidation](docs/PLUGIN_CONSOLIDATION.md) and **[Phase 2 Kickoff](docs/PHASE_2_KICKOFF.md)**.
 
 | Phase | Focus | Status |
 |-------|-------|--------|
-| **1** | Retire Make.com + Monday.com dead code | **Complete** — branch pushed |
-| **2** | Replace Gravity Forms with native Custom Grips intake | Not started |
+| **1** | Retire Make.com + Monday.com dead code | **Complete** — merged to `main` |
+| **2** | Replace Gravity Forms with native Custom Grips intake | **Ready to start** |
 | **3** | Merge Grip Manager into Custom Grips | Not started |
 | **4** | Theme cleanup (presentation only, no business logic) | Not started |
 
-### Active Git branch
+### Active development
 
-```
-consolidation/phase-1-retire-integrations  →  origin (pushed)
-```
-
-Open a PR: https://github.com/misterlinderman/twintackrebuild2026/pull/new/consolidation/phase-1-retire-integrations
+Create branch `consolidation/phase-2-native-grip-intake` from `main` to begin Phase 2.
 
 ## Related repositories and sites
 
@@ -135,6 +131,7 @@ Local site path (not in repo):
 | [Parity Testing](docs/PARITY_TESTING.md) | Post-uploads URL fixes and production parity walkthrough |
 | [Plugin Inventory](docs/PLUGIN_INVENTORY.md) | All plugins — keep/remove/consolidate |
 | [Plugin Consolidation](docs/PLUGIN_CONSOLIDATION.md) | GF/Make/Monday retirement roadmap |
+| [Phase 2 Kickoff](docs/PHASE_2_KICKOFF.md) | Native grip intake — scope and field map |
 | [Theme Overview](docs/THEME_OVERVIEW.md) | twintack2025 structure and cleanup targets |
 | [Git Workflow](docs/GIT_WORKFLOW.md) | Branching, commits, deployment |
 

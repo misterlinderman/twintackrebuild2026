@@ -115,7 +115,7 @@ This plugin **gains** responsibility during consolidation:
 
 ## Phased plan
 
-### Phase 1 — Remove dead outbound integrations (low risk) ✅ Complete (2026-06-26)
+### Phase 1 — Remove dead outbound integrations (low risk) ✅ Complete — merged to `main` (2026-06-27)
 
 **Prerequisite:** Confirm Make.com and Monday.com scenarios are disabled in production.
 
@@ -125,11 +125,15 @@ This plugin **gains** responsibility during consolidation:
 4. ~~Replace Monday.com admin meta box~~ — read-only **Legacy Monday.com Data** panel
 5. ~~Update plugin headers and admin copy~~
 
-**Branch:** `consolidation/phase-1-retire-integrations`
+**Merged:** `consolidation/phase-1-retire-integrations` → `main`
 
-### Phase 2 — Replace Gravity Forms intake (medium risk)
+### Phase 2 — Replace Gravity Forms intake (medium risk) 🟡 Ready to start
+
+**Kickoff doc:** [PHASE_2_KICKOFF.md](PHASE_2_KICKOFF.md)
 
 **Prerequisite:** Document current GF form fields (forms 8/9) and map to Custom Grips form.
+
+**Suggested branch:** `consolidation/phase-2-native-grip-intake`
 
 1. Build native intake form in `twintack-custom-grips` (AJAX + validation + file upload)
 2. Port `class-grip-form-handler.php` cart/deposit logic to Custom Grips
@@ -172,7 +176,7 @@ This plugin **gains** responsibility during consolidation:
 | [`WORKFLOW.md`](../plugins/twintack-custom-grips/WORKFLOW.md) | Canonical status flow and UI URLs |
 | [`PLUGIN_INVENTORY.md`](PLUGIN_INVENTORY.md) | All plugins — keep/remove |
 | [`THEME_OVERVIEW.md`](THEME_OVERVIEW.md) | Theme structure and overlap |
-| [`LOCAL_SANDBOX.md`](LOCAL_SANDBOX.md) | Safe Local dev without outbound calls |
+| [`PHASE_2_KICKOFF.md`](PHASE_2_KICKOFF.md) | Phase 2 — GF replacement scope, field map, implementation steps |
 
 ---
 
