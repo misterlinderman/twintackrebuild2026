@@ -16,6 +16,7 @@ class TwinTack_Grip_Form_Handler {
         
         // Add to cart handling
         add_filter('woocommerce_add_cart_item_data', array($this, 'add_grip_data_to_cart'), 10, 3);
+        add_filter('woocommerce_get_cart_item_from_session', array($this, 'restore_grip_data_from_session'), 10, 3);
         add_filter('woocommerce_get_item_data', array($this, 'display_cart_item_custom_data'), 10, 2);
         add_action('woocommerce_checkout_create_order_line_item', array($this, 'save_grip_data_to_order'), 10, 4);
         
@@ -155,6 +156,19 @@ class TwinTack_Grip_Form_Handler {
         return $cart_item_data;
     }
 
+    /**
+     * Restore custom grip metadata when the cart loads from session (required for AJAX add-to-cart).
+     */
+    public function restore_grip_data_from_session($cart_item, $values, $cart_item_key) {
+        if (isset($values['grip_design_data'])) {
+            $cart_item['grip_design_data'] = $values['grip_design_data'];
+        }
+        if (isset($values['unique_key'])) {
+            $cart_item['unique_key'] = $values['unique_key'];
+        }
+        return $cart_item;
+    }
+
     public function display_cart_item_custom_data($item_data, $cart_item) {
         if (isset($cart_item['grip_design_data'])) {
             $data = $cart_item['grip_design_data'];
@@ -168,11 +182,32 @@ class TwinTack_Grip_Form_Handler {
                 'key' => 'Team/School',
                 'value' => $data['team_name']
             );
+
+            if (!empty($data['design_layout'])) {
+                $item_data[] = array(
+                    'key' => 'Pattern',
+                    'value' => $data['design_layout']
+                );
+            }
             
             $item_data[] = array(
                 'key' => 'Design Type',
                 'value' => $data['design_type']
             );
+
+            if (!empty($data['primary_color'])) {
+                $colors = $data['primary_color'];
+                if (!empty($data['secondary_color'])) {
+                    $colors .= ', ' . $data['secondary_color'];
+                }
+                if (!empty($data['tertiary_color'])) {
+                    $colors .= ', ' . $data['tertiary_color'];
+                }
+                $item_data[] = array(
+                    'key' => 'Colors',
+                    'value' => $colors
+                );
+            }
             
             $item_data[] = array(
                 'key' => 'Quantity',
@@ -288,12 +323,12 @@ class TwinTack_Grip_Form_Handler {
                 '_grip_order_item_id' => $item_id
             );
             
-            // Add additional meta for new form type
-            if ($form_type === 'new') {
-                $meta_input['_grip_design_layout'] = $item->get_meta('_grip_design_layout');
-                $meta_input['_grip_primary_color'] = $item->get_meta('_grip_primary_color');
-                $meta_input['_grip_secondary_color'] = $item->get_meta('_grip_secondary_color');
-                $meta_input['_grip_tertiary_color'] = $item->get_meta('_grip_tertiary_color');
+            // Layout / color meta (GF form 9, native intake, and legacy new form type)
+            foreach (array('design_layout', 'primary_color', 'secondary_color', 'tertiary_color') as $field) {
+                $val = $item->get_meta('_grip_' . $field);
+                if ($val !== '') {
+                    $meta_input['_grip_' . $field] = $val;
+                }
             }
             
             // Create grip design post NOW that payment is completed

@@ -49,18 +49,28 @@ Documented from `class-grip-form-handler.php` field IDs. **Verify against produc
 | — | Logged-in user email → `_grip_customer_email` | Yes (from WP user) |
 | entry ID | `_grip_form_entry_id` | Legacy meta |
 
-### Form 9 — New configurator form (`process_new_grip_form`)
+### Form 9 — New configurator form (`process_new_grip_form`) — production export 2026-06-27
 
-Same as Form 8, plus:
+Reference: `gravityforms-export-2026-06-27.json` (repo root, local only)
 
-| GF field ID | Maps to |
-|-------------|---------|
-| 12 | Design layout → `_grip_design_layout` |
-| 41 | Primary color → `_grip_primary_color` |
-| 42 | Secondary color → `_grip_secondary_color` |
-| 43 | Tertiary color → `_grip_tertiary_color` |
-| — | `design_type` built from layout + colors (see handler) |
-| — | `form_type` = `'new'` in cart metadata |
+| GF field ID | Label | Maps to |
+|-------------|-------|---------|
+| 1.3 / 1.6 | Name (first/last) | `_grip_customer_name` |
+| 3 | Email | `_grip_customer_email` (logged-in user on native form) |
+| 4 | Phone | not stored on grip_design today |
+| 8 | Team/School name | `_grip_team_name` |
+| 9 | Logo upload | `_grip_artwork_url`, `_grip_artwork_filename` |
+| 12 | Design layout (image choice) | `_grip_design_layout` — Solid Color, 2-Color Fade, 3-Color Fade, Splatter |
+| 14 | Design instructions | `_grip_feedback` |
+| 21 | Quantity (25–1000) | `_grip_quantity` |
+| 41 | Product color | `_grip_primary_color` |
+| 42 | Second color | `_grip_secondary_color` |
+| 43 | Third color | `_grip_tertiary_color` |
+| — | Built string | `_grip_design_type` |
+| entry ID | — | `_grip_form_entry_id` |
+| — | `form_type` = `new` | order/cart metadata |
+
+Billing/shipping address fields (13, 17, 18) are collected by GF but checkout uses WooCommerce billing — not copied to grip_design meta.
 
 ### Deposit product
 

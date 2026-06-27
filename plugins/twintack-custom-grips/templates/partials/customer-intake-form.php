@@ -68,10 +68,9 @@ $login_url    = add_query_arg( 'redirect_to', rawurlencode( $redirect_to ), site
                         <select id="ttcg-intake-design_layout" name="design_layout" class="ttcg-input" required>
                             <option value=""><?php esc_html_e( '— Select —', 'twintack-custom-grips' ); ?></option>
                             <option value="Solid Color"><?php esc_html_e( 'Solid Color', 'twintack-custom-grips' ); ?></option>
-                            <option value="Two Tone"><?php esc_html_e( 'Two Tone', 'twintack-custom-grips' ); ?></option>
-                            <option value="Three Tone"><?php esc_html_e( 'Three Tone', 'twintack-custom-grips' ); ?></option>
                             <option value="2-Color Fade"><?php esc_html_e( '2-Color Fade', 'twintack-custom-grips' ); ?></option>
                             <option value="3-Color Fade"><?php esc_html_e( '3-Color Fade', 'twintack-custom-grips' ); ?></option>
+                            <option value="Splatter"><?php esc_html_e( 'Splatter', 'twintack-custom-grips' ); ?></option>
                         </select>
                     </div>
                     <div class="ttcg-form-row" data-color-field="primary">

@@ -17,11 +17,11 @@
     var $feedback = $('#ttcg-intake-feedback');
 
     function layoutsNeedingSecondary(layout) {
-        return layout && layout !== 'Solid Color';
+        return layout === '2-Color Fade' || layout === '3-Color Fade' || layout === 'Splatter';
     }
 
     function layoutsNeedingTertiary(layout) {
-        return layout === 'Three Tone' || layout === '3-Color Fade';
+        return layout === '3-Color Fade';
     }
 
     function updateColorFields() {

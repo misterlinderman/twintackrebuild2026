@@ -164,6 +164,9 @@ class TTCG_Intake {
             wp_send_json_error( array( 'message' => __( 'Could not add the deposit to your cart.', 'twintack-custom-grips' ) ) );
         }
 
+        WC()->cart->calculate_totals();
+        WC()->cart->set_session();
+
         do_action( 'ttcg_grip_intake_submitted', $grip_data, $cart_key );
 
         wp_send_json_success( array(
@@ -239,7 +242,7 @@ class TTCG_Intake {
             'artwork_filename'=> '',
             'feedback'        => $feedback,
             'form_entry_id'   => '',
-            'form_type'       => 'native',
+            'form_type'       => 'new',
             'timestamp'       => current_time( 'timestamp' ),
         );
     }
@@ -249,7 +252,7 @@ class TTCG_Intake {
      * @return bool
      */
     public static function layout_needs_secondary( $layout ) {
-        return ! empty( $layout ) && 'Solid Color' !== $layout;
+        return in_array( $layout, array( '2-Color Fade', '3-Color Fade', 'Splatter' ), true );
     }
 
     /**
@@ -257,7 +260,7 @@ class TTCG_Intake {
      * @return bool
      */
     public static function layout_needs_tertiary( $layout ) {
-        return in_array( $layout, array( 'Three Tone', '3-Color Fade' ), true );
+        return '3-Color Fade' === $layout;
     }
 
     /**
