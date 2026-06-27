@@ -10,9 +10,10 @@ class TwinTack_Grip_Form_Handler {
     }
     
     private function __construct() {
-        // Handle Gravity Form submission
-        add_action('gform_after_submission_8', array($this, 'process_grip_form'), 10, 2);
-        add_action('gform_after_submission_9', array($this, 'process_new_grip_form'), 10, 2);
+        if (class_exists('GFAPI')) {
+            add_action('gform_after_submission_8', array($this, 'process_grip_form'), 10, 2);
+            add_action('gform_after_submission_9', array($this, 'process_new_grip_form'), 10, 2);
+        }
         
         // Add to cart handling
         add_filter('woocommerce_add_cart_item_data', array($this, 'add_grip_data_to_cart'), 10, 3);

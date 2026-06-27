@@ -43,10 +43,9 @@ class TwinTack_Grip_Manager {
             return;
         }
 
-        // Check Gravity Forms dependency
+        // Gravity Forms is optional (legacy intake); native form lives in Custom Grips.
         if (!class_exists('GFAPI')) {
             add_action('admin_notices', array($this, 'gravityforms_missing_notice'));
-            return;
         }
         
         // Load dependencies after confirming requirements are met
@@ -149,8 +148,8 @@ class TwinTack_Grip_Manager {
     
     public function gravityforms_missing_notice() {
         ?>
-        <div class="error">
-            <p><?php _e('TwinTack Grip Manager requires Gravity Forms to be installed and activated.', 'twintack-grip-manager'); ?></p>
+        <div class="notice notice-warning">
+            <p><?php _e('TwinTack Grip Manager: Gravity Forms is not active. Legacy form intake and GF import are disabled; native intake and WooCommerce cart/order handling still run.', 'twintack-grip-manager'); ?></p>
         </div>
         <?php
     }
