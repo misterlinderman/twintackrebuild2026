@@ -47,17 +47,34 @@ Local site path (not in repo):
 |----------|---------|
 | [Project Intent](docs/PROJECT_INTENT.md) | Why this rebuild exists and guiding principles |
 | [Local Setup Guide](docs/LOCAL_SETUP.md) | Replicate production in Local by Flywheel |
+| [Local Sandbox](docs/LOCAL_SANDBOX.md) | Disable outbound integrations for safe theme/plugin dev |
 | [Migration Checklist](docs/MIGRATION_CHECKLIST.md) | Step-by-step port from legacy repo and production |
 | [Plugin Inventory](docs/PLUGIN_INVENTORY.md) | Track what to keep, consolidate, or remove |
+| [Plugin Consolidation](docs/PLUGIN_CONSOLIDATION.md) | Retire GF/Make/Monday; merge around twintack-custom-grips |
+| [Theme Overview](docs/THEME_OVERVIEW.md) | twintack2025 structure, templates, consolidation targets |
 | [Git Workflow](docs/GIT_WORKFLOW.md) | Branching, commits, and deployment strategy |
+
+## Current status (2026-06-26)
+
+| Item | Status |
+|------|--------|
+| `themes/twintack2025/` | Copied from production |
+| Default Twenty* themes | Removed |
+| Custom TwinTack plugins (10) | Copied from production — **tracked in Git** |
+| Third-party plugins (22) | Copied from production — **local only, not in Git** |
+| Production database | Not yet imported |
+| Media (`uploads/`) | Not yet imported |
+
+**Next step:** Import production DB and uploads per [Local Setup Guide](docs/LOCAL_SETUP.md), then activate theme/plugins and verify parity.
 
 ## Quick start
 
 1. Open the **twintack-rebuild-2026** site in Local by Flywheel and start it.
 2. Clone this repo into `app/public/wp-content/` (or work in place if already there).
-3. Follow [Migration Checklist](docs/MIGRATION_CHECKLIST.md) to port theme and plugins from [twintack](https://github.com/misterlinderman/twintack).
+3. Copy third-party plugins from production or reinstall per [Plugin Inventory](docs/PLUGIN_INVENTORY.md) (not in Git).
 4. Import production database and media per [Local Setup Guide](docs/LOCAL_SETUP.md).
-5. Create a feature branch and begin refinement work.
+5. Follow remaining items in [Migration Checklist](docs/MIGRATION_CHECKLIST.md).
+6. Create a feature branch and begin refinement work.
 
 ## What not to commit
 

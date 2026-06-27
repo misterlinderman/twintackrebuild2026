@@ -1,0 +1,218 @@
+<?php
+/**
+ * Plugin Name: TwinTack Grip Manager
+ * Description: Grip design post type, WooCommerce order bridge, and cart helpers. Production workflow lives in twintack-custom-grips.
+ * Version: 1.7.06
+ * Author: TwinTack Team
+ * Requires at least: 5.8
+ * Requires PHP: 7.4
+ */
+
+if (!defined('ABSPATH')) exit;
+
+class TwinTack_Grip_Manager {
+    private static $instance = null;
+    
+    public static function get_instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+    
+    private function __construct() {
+        // Hook into plugins_loaded to ensure WooCommerce is loaded first
+        add_action('plugins_loaded', array($this, 'init'), 10);
+        
+        // Register activation hook
+        register_activation_hook(__FILE__, array($this, 'activate'));
+        
+        // Add deactivation hook to clean up
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
+    }
+    
+    public function init() {
+        // Debug log to confirm plugin is loading
+        if (WP_DEBUG) {
+            error_log('TwinTack Grip Manager initializing...');
+        }
+        
+        // Check WooCommerce dependency first
+        if (!class_exists('WooCommerce')) {
+            add_action('admin_notices', array($this, 'woocommerce_missing_notice'));
+            return;
+        }
+
+        // Check Gravity Forms dependency
+        if (!class_exists('GFAPI')) {
+            add_action('admin_notices', array($this, 'gravityforms_missing_notice'));
+            return;
+        }
+        
+        // Load dependencies after confirming requirements are met
+        require_once plugin_dir_path(__FILE__) . 'includes/class-grip-post-type.php';
+        require_once plugin_dir_path(__FILE__) . 'includes/class-grip-form-handler.php';
+        require_once plugin_dir_path(__FILE__) . 'includes/class-grip-admin.php';
+        require_once plugin_dir_path(__FILE__) . 'includes/class-grip-account.php';
+        require_once plugin_dir_path(__FILE__) . 'includes/class-grip-volume-pricing.php';
+        require_once plugin_dir_path(__FILE__) . 'includes/class-grip-importer.php';
+        require_once plugin_dir_path(__FILE__) . 'includes/class-grip-email-notifications.php';
+        
+        // Initialize components - ensure post type is registered first
+        $post_type = TwinTack_Grip_Post_Type::get_instance();
+        
+        if (WP_DEBUG) {
+            error_log('TwinTack Grip Manager: Post type instance created');
+        }
+        
+        TwinTack_Grip_Form_Handler::get_instance();
+        
+        // Only load admin in admin area
+        if (is_admin()) {
+            TwinTack_Grip_Admin::get_instance();
+        }
+
+        // Initialize account features (always load for AJAX support)
+        TwinTack_Grip_Account::get_instance();
+        
+        // Initialize volume pricing system
+        TwinTack_Grip_Volume_Pricing::get_instance();
+        
+        // Initialize importer (admin UI only appears in dashboard)
+        TwinTack_Grip_Importer::get_instance();
+        
+        // Initialize email notifications
+        TwinTack_Grip_Email_Notifications::get_instance();
+        
+        // Only add template hijacking prevention for frontend
+        if (!is_admin()) {
+            // Prevent theme template from hijacking our endpoint
+            add_action('template_redirect', array($this, 'prevent_theme_template_hijacking'));
+        }
+
+        // Add CSS for grip designs
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
+        
+        // Increase upload limits for grip design files
+        add_filter('upload_size_limit', array($this, 'increase_upload_size_limit'));
+        add_filter('wp_max_upload_size', array($this, 'increase_upload_size_limit'));
+        
+        // Add execution time handling for WordPress uploads
+        add_action('wp_handle_upload_prefilter', array($this, 'increase_execution_time_for_uploads'));
+        add_action('add_attachment', array($this, 'increase_execution_time_for_uploads'));
+        
+        // Force flush rewrite rules if needed (only once)
+        $this->maybe_flush_rules();
+    }
+    
+    private function maybe_flush_rules() {
+        $version_option = 'twintack_grip_manager_version';
+        $current_version = get_option($version_option);
+        $plugin_version = '1.7.05';
+        
+        if ($current_version !== $plugin_version) {
+            // Force flush rewrite rules
+            flush_rewrite_rules();
+            update_option($version_option, $plugin_version);
+            
+            if (WP_DEBUG) {
+                error_log('TwinTack Grip Manager: Flushed rewrite rules for version ' . $plugin_version);
+            }
+        }
+    }
+    
+    public function prevent_theme_template_hijacking() {
+        global $wp_query;
+        
+        // Check if we're on the grip-designs endpoint
+        if (isset($wp_query->query_vars['grip-designs'])) {
+            // Remove any theme template hooks that might be interfering
+            remove_all_filters('template_include');
+            
+            // Add our template include filter back with high priority
+            add_filter('template_include', array($this, 'use_default_template'), 999);
+        }
+    }
+    
+    public function use_default_template($template) {
+        // Use the default template for our endpoint
+        return locate_template(array('page.php', 'single.php', 'index.php'));
+    }
+    
+    public function woocommerce_missing_notice() {
+        ?>
+        <div class="error">
+            <p><?php _e('TwinTack Grip Manager requires WooCommerce to be installed and activated.', 'twintack-grip-manager'); ?></p>
+        </div>
+        <?php
+    }
+    
+    public function gravityforms_missing_notice() {
+        ?>
+        <div class="error">
+            <p><?php _e('TwinTack Grip Manager requires Gravity Forms to be installed and activated.', 'twintack-grip-manager'); ?></p>
+        </div>
+        <?php
+    }
+    
+    public function activate() {
+        // Load and initialize post type
+        require_once plugin_dir_path(__FILE__) . 'includes/class-grip-post-type.php';
+        $post_type = TwinTack_Grip_Post_Type::get_instance();
+        $post_type->register_post_type();
+        
+        // Flush rewrite rules
+        flush_rewrite_rules();
+        
+        if (WP_DEBUG) {
+            error_log('TwinTack Grip Manager activated');
+        }
+    }
+    
+    public function deactivate() {
+        // Flush rewrite rules on deactivation
+        flush_rewrite_rules();
+        
+        if (WP_DEBUG) {
+            error_log('TwinTack Grip Manager deactivated');
+        }
+    }
+
+    public function enqueue_styles() {
+        wp_enqueue_style(
+            'grip-designs',
+            plugins_url('assets/css/grip-designs.css', __FILE__),
+            array(),
+            '1.6.03'
+        );
+    }
+    
+    /**
+     * Increase upload size limit for grip design files
+     */
+    public function increase_upload_size_limit($size) {
+        // Server already allows 512MB, this ensures WordPress recognizes it
+        $new_size = 512 * 1024 * 1024; // Match server limit
+        
+        // Only increase if current limit is smaller
+        return max($size, $new_size);
+    }
+    
+    /**
+     * Handle file uploads with proper logging
+     */
+    public function increase_execution_time_for_uploads($file = null) {
+        // Server execution time is properly configured via cPanel
+        // Just add logging for upload tracking
+        if (WP_DEBUG && $file) {
+            error_log('TwinTack: Processing file upload - Server limits: 300s execution, 512MB size');
+        }
+        
+        return $file;
+    }
+}
+
+// Initialize the plugin immediately
+TwinTack_Grip_Manager::get_instance();
+
+

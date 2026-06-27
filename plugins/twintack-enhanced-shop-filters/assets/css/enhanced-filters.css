@@ -1,0 +1,544 @@
+/**
+ * TwinTack Enhanced Shop Filters CSS
+ * Enhanced styling with variation swatch plugin integration
+ */
+
+/* Filter Modal Integration */
+.filter-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.filter-modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.filter-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #eee;
+}
+
+.filter-modal-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+#filter-modal-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: #666;
+    line-height: 1;
+    transition: color 0.3s ease;
+}
+
+#filter-modal-close:hover {
+    color: #000;
+}
+
+/* Filter Button */
+.filter-button,
+.twintack-modal-trigger {
+    background-color: #000 !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    margin-bottom: 1rem !important;
+    display: inline-block !important;
+    text-decoration: none !important;
+    z-index: 10 !important;
+    position: relative !important;
+}
+
+.filter-button:hover,
+.twintack-modal-trigger:hover {
+    background-color: var(--color-highlight) !important;
+    color: var(--color-primary) !important;
+}
+
+.filter-button,
+.twintack-modal-trigger {
+    display: flex !important;
+    justify-content: center !important;
+    padding: 0.5rem 1rem !important;
+    background-color: var(--color-accent) !important;
+    color: var(--color-text) !important;
+    font-size: 1.2rem !important;
+    font-weight: 800 !important;
+    width: 100% !important;
+    max-width: 200px !important;
+    margin: 1.5rem 0 !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s ease !important;
+    border: none !important;
+    border-radius: 3px !important;
+    text-transform: uppercase !important;
+    text-align: center !important;
+}
+
+/* Filter Form */
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.filter-control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-control label {
+    font-weight: bold;
+    color: #333;
+    font-size: 1rem;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #fff;
+    color: #333;
+    transition: border-color 0.3s ease;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #000;
+}
+
+/* Color Filter Styles */
+.color-filter .filter-select {
+    margin-bottom: 10px;
+}
+
+/* Color Swatches */
+.color-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.color-swatch {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.color-swatch:hover {
+    border-color: #666;
+    transform: scale(1.1);
+}
+
+.color-swatch.active {
+    border-color: #000;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+}
+
+/* Enhanced styling when swatches are disabled */
+.color-filter:not(.has-swatches) .filter-select {
+    min-width: 200px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+}
+
+/* Variation Swatch Integration */
+.variation-swatch {
+    position: relative;
+    overflow: hidden;
+}
+
+.variation-swatch::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+}
+
+.variation-swatch.active::after {
+    border-color: rgba(0, 0, 0, 0.5);
+    border-width: 3px;
+}
+
+/* Price Filter */
+.price-filter .price-inputs {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.price-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #fff;
+    color: #333;
+    transition: border-color 0.3s ease;
+}
+
+.price-input:focus {
+    outline: none;
+    border-color: #000;
+}
+
+.price-input::placeholder {
+    color: #999;
+}
+
+/* Filter Buttons */
+.filter-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.apply-filters-btn {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.apply-filters-btn:hover {
+    background-color: #333;
+    transform: translateY(-2px);
+}
+
+.clear-filters-btn {
+    background-color: #fff;
+    color: #333;
+    border: 2px solid #ddd;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.clear-filters-btn:hover {
+    border-color: #000;
+    color: #000;
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .filter-modal-content {
+        width: 95%;
+        margin: 2% auto;
+        padding: 1rem;
+        max-height: 90vh;
+    }
+    
+    .filter-modal-header h3 {
+        font-size: 1.25rem;
+    }
+    
+    .color-swatches {
+        gap: 0.25rem;
+    }
+    
+    .color-swatch {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .price-filter .price-inputs {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .filter-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .apply-filters-btn,
+    .clear-filters-btn {
+        width: 100%;
+        padding: 1rem;
+    }
+}
+
+/* Loading States */
+.filter-form.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.filter-form.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #000;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Enhanced Accessibility */
+.color-swatch:focus {
+    outline: 3px solid #000;
+    outline-offset: 2px;
+}
+
+.filter-select:focus,
+.price-input:focus {
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Filter Display Modes */
+.filter-horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    background-color: #f5f5f5;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.filter-horizontal .filter-control {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0;
+}
+
+.filter-horizontal .filter-control label {
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+.filter-horizontal .filter-select {
+    width: auto;
+    min-width: 150px;
+}
+
+.filter-sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100vh;
+    background-color: #fff;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease;
+    z-index: 9998;
+    overflow-y: auto;
+    padding: 2rem;
+}
+
+.filter-sidebar.open {
+    left: 0;
+}
+
+.filter-sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9997;
+    display: none;
+}
+
+.filter-sidebar-overlay.open {
+    display: block;
+}
+
+/* Integration with existing theme styles */
+.twintack-enhanced-filters {
+    margin: 1rem 0;
+}
+
+.twintack-enhanced-filters * {
+    box-sizing: border-box;
+}
+
+/* Better swatch tooltips */
+.color-swatch[title]:hover::before {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #000;
+    color: #fff;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    z-index: 10;
+    margin-bottom: 0.5rem;
+}
+
+.color-swatch[title]:hover::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #000;
+    z-index: 10;
+}
+
+/* Active Filters Display */
+.twintack-active-filters {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.active-filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.active-filters-label {
+    font-weight: bold;
+    color: #333;
+    font-size: 1rem;
+}
+
+.clear-all-filters {
+    color: #dc3545;
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #dc3545;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.clear-all-filters:hover {
+    background-color: #dc3545;
+    color: white;
+    text-decoration: none;
+}
+
+.active-filters-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.active-filter-item {
+    display: flex;
+    align-items: center;
+    background-color: #000;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    gap: 0.5rem;
+}
+
+.active-filter-item .filter-label {
+    white-space: nowrap;
+}
+
+.active-filter-item .remove-filter {
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    line-height: 1;
+    padding: 0 0.25rem;
+    border-radius: 2px;
+    transition: background-color 0.3s ease;
+}
+
+.active-filter-item .remove-filter:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    text-decoration: none;
+}
+
+/* Responsive Design for Active Filters */
+@media (max-width: 768px) {
+    .active-filters-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+    
+    .active-filters-list {
+        flex-direction: column;
+    }
+    
+    .active-filter-item {
+        justify-content: space-between;
+    }
+} 

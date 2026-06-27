@@ -6,18 +6,18 @@ cache/
 backups/
 wflogs/
 
-# Default WordPress themes (core bundles, not custom code)
+# Default WordPress themes (removed from Local; ignore if reinstalled by core update)
 themes/twentytwenty*/
 themes/twentytwentyfive/
 themes/twentytwentyfour/
 themes/twentytwentythree/
 
-# Third-party plugin installs (install via Composer, zip, or WP admin)
-# Track only TwinTack custom plugins and pinned config — see docs/PLUGIN_INVENTORY.md
-plugins/woocommerce/
-plugins/woocommerce-*/
-plugins/advanced-custom-fields*/
-plugins/*/*.zip
+# Third-party plugins — present locally after production copy, not tracked in Git.
+# Only TwinTack custom plugins (plugins/twintack-*) are version-controlled.
+# Versions documented in docs/PLUGIN_INVENTORY.md
+plugins/*
+!plugins/index.php
+!plugins/twintack-*/
 
 # Secrets and environment
 .env

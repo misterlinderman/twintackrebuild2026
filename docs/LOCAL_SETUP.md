@@ -29,24 +29,30 @@ Local provides WordPress core and `wp-config.php`. Confirm:
 - Permalinks: **Settings → Permalinks → Post name**
 - PHP memory limit ≥ 256M (Local site settings if needed)
 
-## Step 2 — Install third-party plugins
+## Step 2 — Theme and plugins
 
-Install plugins documented in [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md). Typical production stack:
+**If starting from this repo after 2026-06-26:** The production theme and full plugin set were already copied from twintack.com into Local. Custom TwinTack plugins are in Git; third-party plugins are on disk but not tracked — see [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md).
 
-1. **WooCommerce** — match production version
-2. **Advanced Custom Fields PRO** — install from license zip; import field groups if not in DB
-3. **WooCommerce Stripe Gateway** — install; use test API keys locally
-4. Any other plugins marked "keep" in the inventory
+**If cloning fresh:** Copy third-party plugins from a production backup or reinstall from WP admin / license zips per the inventory. Only `plugins/twintack-*` come from Git.
 
-Do not commit these to Git. Update `PLUGIN_INVENTORY.md` with installed versions.
+Typical production stack (all present locally as of port):
 
-## Step 3 — Port custom theme and plugins
+1. **WooCommerce** 10.9.1
+2. **Advanced Custom Fields PRO** 6.8.4
+3. **WooCommerce Stripe Gateway** 10.8.3 — use test API keys locally
+4. Wholesale suite, variation swatches, Klaviyo, integrations — see inventory
 
-Follow [MIGRATION_CHECKLIST.md](MIGRATION_CHECKLIST.md). After copying:
+Do not commit third-party plugins to Git.
 
-1. Activate `twintack2025` (or renamed successor) under **Appearance → Themes**
+## Step 3 — Activate theme and plugins
+
+After DB import (or on fresh Local with plugins on disk):
+
+1. Activate `twintack2025` under **Appearance → Themes**
 2. Activate custom TwinTack plugins under **Plugins**
 3. Resolve fatal errors before proceeding (check `logs/php/error.log` in Local site folder)
+
+See [MIGRATION_CHECKLIST.md](MIGRATION_CHECKLIST.md) for remaining port tasks.
 
 ## Step 4 — Import production database
 

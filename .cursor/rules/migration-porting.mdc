@@ -6,11 +6,13 @@ alwaysApply: false
 
 # Migration and Porting Rules
 
-When helping port code from https://github.com/misterlinderman/twintack or production:
+**Port status (2026-06-26):** Theme + all plugins copied from production. DB + uploads still pending.
 
-## Port order
+When helping with remaining migration work:
 
-1. Theme (`twintack2025`) → 2. Custom plugins → 3. Third-party plugins (install, don't copy) → 4. DB + uploads
+## Port order (remaining)
+
+1. ~~Theme + plugins~~ (done) → 2. DB import → 3. Uploads sync → 4. URL search-replace → 5. Parity testing
 
 ## Do not port
 

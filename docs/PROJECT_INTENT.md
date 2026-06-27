@@ -17,7 +17,7 @@ This repository (`twintackrebuild2026`) is a **clean development foundation** �
 
 1. **Local-first development** using [Local by Flywheel](https://localwp.com/) site `twintack-rebuild-2026`
 2. **Version-controlled custom code** with meaningful branches and pull requests
-3. **A consolidation pass** on theme and plugin architecture before the next production deploy
+3. **A consolidation pass** on theme and plugin architecture — centered on `twintack-custom-grips`, retiring Gravity Forms, Make.com, and Monday.com
 4. **Documented parity steps** so local dev reflects real WooCommerce products, orders context, and media
 
 ## What this rebuild is not
@@ -64,17 +64,36 @@ WooCommerce variable products, custom grip configurations, ACF field groups, and
 
 - [ ] Local site renders the TwinTack homepage and shop with production-equivalent content
 - [ ] Custom grip ordering/management flows work end-to-end in Local
-- [ ] Single canonical theme and plugin set with no duplicate version folders
-- [ ] Documented plugin keep/remove decisions in `PLUGIN_INVENTORY.md`
+- [x] Single canonical theme and plugin set with no duplicate version folders
+- [x] Documented plugin keep/remove decisions in `PLUGIN_INVENTORY.md`
 - [ ] Git workflow used for all custom code changes before production
+
+## Current port status (2026-06-26)
+
+Production theme and plugins copied directly from **twintack.com** into Local:
+
+- **Theme:** `themes/twintack2025/` — see [THEME_OVERVIEW.md](THEME_OVERVIEW.md)
+- **Custom plugins:** 10 `twintack-*` plugins (Grip Manager v1.7.05, Manual Order Payments v4.6.1, etc.)
+- **Third-party plugins:** 22 plugins present locally, versions documented in [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md), excluded from Git
+- **Pending:** Production database + `uploads/` import for full parity
+
+## Consolidation priorities (post-import)
+
+See **[PLUGIN_CONSOLIDATION.md](PLUGIN_CONSOLIDATION.md)** for the full roadmap.
+
+1. **Retire Make.com + Monday.com** — legacy artwork/production automation; native workflow lives in `twintack-custom-grips`
+2. **Retire Gravity Forms** — replace form intake with native Custom Grips forms; remove theme/Grip Manager GF hooks
+3. **Merge Grip Manager → Custom Grips** — single workflow plugin owns CPT, intake, WC sync, team/customer UI
+4. **Marketing duplication** — theme `template-parts/marketing/v2/` vs `twintack-marketing` plugin
+5. **Wholesale workarounds** — merge or replace `twintack-product-save-bypass` and `twintack-admin-console-fixes`
+6. **Theme cleanup** — remove integration webhooks, GF script fixes, debug artifacts
 
 ## Legacy reference map
 
-| Legacy (twintack repo) | Rebuild target |
-|------------------------|----------------|
-| `themes/twintack2025/` | `themes/twintack2025/` (refined) |
-| `themes/twintack2025-previous/` | Do not port — extract if needed |
-| `plugins/twintack-grip-manager*` | `plugins/twintack-grip-manager/` (single version) |
-| `plugins/woocommerce/` | Install via WP — document version |
-| `plugins/advanced-custom-fields-pro.zip` | Install via license — document version |
-| `plugins/woocommerce-gateway-stripe/` | Install via WP — document version |
+| Source | Rebuild target | Status |
+|--------|----------------|--------|
+| Production `themes/twintack2025/` | `themes/twintack2025/` | Copied |
+| Legacy `twintack2025-previous/` | Do not port | Skipped |
+| Production `plugins/twintack-*` | `plugins/twintack-*/` | Copied (10 plugins) |
+| Legacy duplicate grip manager folders | Single `twintack-grip-manager/` | Not copied |
+| Third-party plugins | Local install only | Copied, not in Git |

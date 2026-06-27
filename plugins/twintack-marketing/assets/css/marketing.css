@@ -1,0 +1,781 @@
+/**
+ * TwinTack Marketing Styles
+ */
+
+/* Product Video */
+.twintack-product-video-wrapper {
+    margin: 40px 0;
+    clear: both;
+}
+
+.twintack-video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    background: #000;
+}
+
+.twintack-video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Announcement Bar */
+.twintack-announcement-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 12px 20px;
+    text-align: center;
+    z-index: 10001;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Admin bar adjustment */
+.admin-bar .twintack-announcement-bar {
+    top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+    .admin-bar .twintack-announcement-bar {
+        top: 46px;
+    }
+}
+
+.twintack-announcement-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.twintack-announcement-text {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.twintack-announcement-text a {
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+.twintack-announcement-close {
+    position: absolute;
+    right: 0;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.twintack-announcement-close:hover {
+    opacity: 1;
+}
+
+/* Bundle Counter */
+.twintack-bundle-counter {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 12px 20px;
+    text-align: center;
+    z-index: 10000;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    min-height: 75px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Admin bar adjustment - default positioning, overridden by inline styles when announcement bar is active */
+.admin-bar .twintack-bundle-counter {
+    top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+    .admin-bar .twintack-bundle-counter {
+        top: 46px;
+    }
+}
+
+.twintack-bundle-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.twintack-bundle-counter .bundle-text {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.twintack-bundle-counter.qualified .bundle-text {
+    font-size: 16px;
+}
+
+.twintack-bundle-counter .bundle-progress-bar {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.twintack-bundle-counter .progress-track {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.twintack-bundle-counter .progress-fill {
+    height: 100%;
+    background: var(--color-highlight, #ff0b00);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.twintack-bundle-counter .progress-count {
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    min-width: 50px;
+}
+
+.twintack-bundle-counter .current-count {
+    font-size: 18px;
+}
+
+/* Qualified state animation */
+.twintack-bundle-counter.qualified {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+    50% {
+        box-shadow: 0 2px 12px rgba(126, 211, 33, 0.4);
+    }
+}
+
+/* Product Color Scheme */
+body.twintack-product-color-alternate .woocommerce .product {
+    /* Alternate color scheme styles - customize as needed */
+}
+
+body.twintack-product-color-alternate .woocommerce .product .summary {
+    /* Example: Different background or text colors */
+}
+
+/* Featured Products */
+.twintack-featured-products {
+    margin: 60px 0;
+    position: relative;
+    width: 100%;
+}
+
+.twintack-featured-products .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    background-color: black;
+    color: white;
+}
+
+.twintack-featured-products-title {
+    text-align: center;
+    /* margin-bottom: 40px; */
+    font-size: 2.5rem;
+    font-weight: 900;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+}
+
+.twintack-featured-products-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+/* WooCommerce Products Grid Override for Carousel */
+.twintack-featured-products .products {
+    margin: 0;
+    padding: 0;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+}
+
+.twintack-featured-products .products.slick-initialized {
+    display: block !important;
+}
+
+/* Slick Carousel Overrides */
+.twintack-featured-products-slider.slick-slider {
+    overflow: hidden;
+}
+
+.twintack-featured-products-slider .slick-list {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.twintack-featured-products-slider .slick-track {
+    display: flex;
+    align-items: stretch;
+}
+
+.twintack-featured-products-slider .slick-slide {
+    height: auto;
+    padding: 0 10px;
+    float: none;
+}
+
+.twintack-featured-products-slider .slick-slide > div {
+    height: 100%;
+}
+
+.twintack-featured-products-slider .product {
+    height: 100%;
+    margin: 0;
+}
+
+/* Match shop archive styling - white backgrounds with highlight border on hover */
+.twintack-featured-products .product {
+    padding: 0 1em !important;
+    /* background: #ffffff !important; */
+    cursor: pointer;
+    text-align: center;
+}
+
+.twintack-featured-products .product img {
+    border: 3px solid var(--color-text);
+    transition: border-color 0.3s ease;
+    background-color: white;
+    border-radius: 5px;
+}
+
+.twintack-featured-products .product:hover img {
+    border: 3px solid var(--color-highlight);
+}
+
+.twintack-featured-products .product .woocommerce-loop-product__link {
+    display: contents;
+    text-decoration: none;
+}
+
+/* Match related products title styling */
+.twintack-featured-products .product-title-structured {
+    min-height: 3rem;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.twintack-featured-products .product-pattern {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.1rem;
+}
+
+.twintack-featured-products .product-model {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.1rem;
+}
+
+.twintack-featured-products .product-color {
+    font-size: 0.75rem;
+    font-weight: 400;
+}
+
+/* Style the product title/model to match pattern styling */
+.twintack-featured-products .woocommerce-loop-product__title {
+    color: var(--color-text);
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 0;
+    margin: 0.5rem 0 0.1rem 0;
+}
+
+.twintack-featured-products .price {
+    color: var(--color-highlight) !important;
+    font-size: 1.6em !important;
+    font-weight: 700 !important;
+    padding: 0 !important;
+    margin-bottom: 2.5rem;
+}
+
+/* Hide variation swatches and add to cart in featured products */
+.twintack-featured-products .wvs-archive-variations-wrapper {
+    display: none !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    /* Remove gap between hero and featured products on mobile */
+    .twintack-marketing-hero {
+        margin-bottom: 0 !important;
+    }
+    
+    /* Remove top padding from main when it follows hero */
+    .twintack-marketing-hero + main#primary,
+    .twintack-marketing-hero + main.site-main {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+    
+    .twintack-featured-products {
+        margin: 0;
+    }
+    
+    .twintack-featured-products-title {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+    
+    .twintack-featured-products .product-title-structured {
+        min-height: 2.5rem;
+    }
+    
+    .twintack-featured-products .product-pattern,
+    .twintack-featured-products .product-model,
+    .twintack-featured-products .woocommerce-loop-product__title {
+        font-size: 0.95rem;
+    }
+    
+    .twintack-featured-products .product-color {
+        font-size: 0.7rem;
+    }
+    
+    /* Ensure single product display on mobile */
+    .twintack-featured-products-slider .slick-slide {
+        width: 100% !important;
+        padding: 0 15px;
+    }
+    
+    .twintack-featured-products-slider .slick-list {
+        margin: 0 -15px;
+    }
+    
+    /* Always show navigation on mobile if there's more than 1 product */
+    .twintack-featured-products-nav {
+        display: flex !important;
+    }
+}
+
+/* Carousel Navigation */
+.twintack-featured-products-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 130px;
+    margin-top: 0.5rem;
+}
+
+.twintack-featured-products-nav button {
+    background: var(--color-highlight);
+    color: black;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.twintack-featured-products-nav button:hover:not(:disabled) {
+    opacity: 0.8;
+    transform: scale(1.1);
+}
+
+.twintack-featured-products-nav button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.twintack-featured-products-nav button svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Desktop: Show 3 products */
+@media (min-width: 769px) {
+    .twintack-featured-products .products:not(.slick-initialized) {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+
+/* Mobile: Show 1 product */
+@media (max-width: 768px) {
+    .twintack-featured-products .container {
+        padding: 0 15px;
+    }
+    
+    .twintack-featured-products .products:not(.slick-initialized) {
+        display: grid !important;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .twintack-featured-products-slider .slick-slide {
+        padding: 0 5px;
+    }
+}
+
+/* Banner Blocks */
+.twintack-banner-block {
+    margin: 40px 0;
+    width: 100%;
+}
+
+.twintack-banner-fullwidth {
+    width: 100%;
+}
+
+.twintack-banner-fullwidth .twintack-banner-link {
+    display: block;
+    width: 100%;
+}
+
+.twintack-banner-fullwidth .twintack-banner-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.twintack-banner-50-50 .twintack-banner-content-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.twintack-banner-50-50 .twintack-banner-image-side {
+    flex: 1;
+}
+
+.twintack-banner-50-50 .twintack-banner-image-side img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.twintack-banner-50-50 .twintack-banner-text-side {
+    flex: 1;
+    padding: 20px;
+}
+
+.twintack-banner-title {
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+.twintack-banner-text {
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.twintack-banner-cta {
+    display: inline-block;
+    margin-top: 20px;
+}
+
+/* Landing Page Hero */
+.twintack-landing-hero {
+    position: relative;
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+.twintack-landing-hero-image {
+    width: 100%;
+    display: block;
+}
+
+.twintack-landing-hero-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.twintack-landing-hero-content {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    text-align: center;
+    color: #fff;
+    z-index: 2;
+}
+
+.twintack-landing-hero-title {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.twintack-landing-hero-subtitle {
+    font-size: 1.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.twintack-landing-content {
+    padding: 40px 0;
+}
+
+/* Hero Carousel - Override theme's 93vh min-height */
+.site-marquee.twintack-marketing-hero,
+.twintack-marketing-hero.site-marquee,
+.twintack-marketing-hero {
+    position: relative;
+    width: 100%;
+    overflow: visible;
+    background-color: #000;
+    min-height: auto !important;
+    height: auto !important;
+    margin-top: 75px;
+}
+
+.twintack-marketing-hero .marquee-slides {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+/* Make marketing hero slides position relative instead of absolute so they size to content */
+.twintack-marketing-hero .marquee-slide {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100%;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    display: none;
+}
+
+.twintack-marketing-hero .marquee-slide.active {
+    display: block;
+}
+
+/* Override all media query min-heights for marketing hero */
+@media screen and (max-width: 1640px) {
+    .site-marquee.twintack-marketing-hero,
+    .twintack-marketing-hero.site-marquee {
+        min-height: auto !important;
+    }
+}
+
+@media screen and (max-width: 1450px) {
+    .site-marquee.twintack-marketing-hero,
+    .twintack-marketing-hero.site-marquee {
+        min-height: auto !important;
+    }
+}
+
+@media screen and (max-width: 1100px) {
+    .site-marquee.twintack-marketing-hero,
+    .twintack-marketing-hero.site-marquee {
+        min-height: auto !important;
+    }
+}
+
+@media screen and (max-width: 880px) {
+    .site-marquee.twintack-marketing-hero,
+    .twintack-marketing-hero.site-marquee {
+        min-height: auto !important;
+    }
+}
+
+@media screen and (max-width: 782px) {
+    .site-marquee.twintack-marketing-hero,
+    .twintack-marketing-hero.site-marquee {
+        min-height: auto !important;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .site-marquee.twintack-marketing-hero,
+    .twintack-marketing-hero.site-marquee {
+        min-height: auto !important;
+    }
+}
+
+.twintack-marketing-hero .marquee-slide-link {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+    position: relative;
+    line-height: 0;
+}
+
+.twintack-marketing-hero picture.marquee-slide-image {
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    line-height: 0;
+}
+
+.twintack-marketing-hero picture.marquee-slide-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
+}
+
+/* Hero Video Styles */
+.twintack-marketing-hero .marquee-slide-video {
+    display: block;
+    width: 100%;
+    line-height: 0;
+}
+
+.twintack-marketing-hero .marquee-video {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0;
+    padding: 0;
+    object-fit: cover;
+}
+
+.twintack-marketing-hero .video-fallback {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Desktop/Mobile visibility for video slides */
+.twintack-marketing-hero .desktop-only {
+    display: block !important;
+}
+
+.twintack-marketing-hero .mobile-only {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .twintack-marketing-hero .desktop-only {
+        display: none !important;
+    }
+    
+    .twintack-marketing-hero .mobile-only {
+        display: block !important;
+    }
+}
+
+/* Ensure hero images scale properly at all sizes */
+@media (min-width: 769px) {
+    .twintack-marketing-hero picture.marquee-slide-image img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .twintack-marketing-hero picture.marquee-slide-image img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .twintack-banner-50-50 .twintack-banner-content-wrapper {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .twintack-banner-50-50 .twintack-banner-text-side {
+        padding: 15px;
+    }
+    
+    .twintack-announcement-text {
+        font-size: 12px;
+        padding-right: 30px;
+    }
+    
+    .twintack-bundle-counter {
+        padding: 12px 15px;
+    }
+    
+    .twintack-bundle-counter .bundle-text {
+        font-size: 13px;
+    }
+    
+    .twintack-bundle-counter.qualified .bundle-text {
+        font-size: 14px;
+    }
+    
+    .twintack-bundle-counter .bundle-progress-bar {
+        max-width: 100%;
+    }
+    
+    .twintack-bundle-counter .progress-count {
+        font-size: 12px;
+        min-width: 45px;
+    }
+    
+    .twintack-bundle-counter .current-count {
+        font-size: 16px;
+    }
+    
+    .twintack-landing-hero-title {
+        font-size: 2rem;
+    }
+    
+    .twintack-landing-hero-subtitle {
+        font-size: 1.2rem;
+    }
+}
+

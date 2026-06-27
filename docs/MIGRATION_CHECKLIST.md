@@ -2,78 +2,76 @@
 
 Use this checklist when bringing code from [misterlinderman/twintack](https://github.com/misterlinderman/twintack) and production into the Local rebuild environment.
 
+**Status as of 2026-06-26:** Theme and full production plugin set copied directly from **twintack.com** (not legacy Git repo). Database and media import still pending.
+
+---
+
 ## Phase 0 — Preparation
 
-- [ ] Clone legacy repo for reference: `git clone https://github.com/misterlinderman/twintack.git ~/twintack-legacy`
-- [ ] Confirm production plugin list (WP Admin → Plugins) — may differ from legacy repo
+- [x] Production plugin list captured — see [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md)
+- [ ] Clone legacy repo for reference (optional): `git clone https://github.com/misterlinderman/twintack.git ~/twintack-legacy`
 - [ ] Export production database (see [LOCAL_SETUP.md](LOCAL_SETUP.md))
 - [ ] Download production `uploads/` folder
 - [ ] Create branch: `git checkout -b migration/initial-port`
 
 ## Phase 1 — Theme port
 
-### Copy active theme
-
-```bash
-LEGACY=~/twintack-legacy
-LOCAL="/Volumes/A&D/Dropbox/Development/Local/twintack-rebuild-2026/app/public/wp-content"
-
-cp -R "$LEGACY/themes/twintack2025" "$LOCAL/themes/"
-```
-
-- [ ] Theme copied to `themes/twintack2025/`
-- [ ] **Do not copy** `twintack2025-previous` unless recovering specific code
-- [ ] Review theme `style.css` header — update version if consolidating changes
-- [ ] Run theme asset build if applicable (`npm install && npm run build` in theme dir)
+- [x] Theme copied to `themes/twintack2025/` (from production server)
+- [x] Default Twenty* themes removed
+- [x] **Did not copy** `twintack2025-previous`
+- [ ] Review theme `style.css` header — bump version on first rebuild release
+- [ ] Run theme asset build if modifying JS pipeline (`npm install` in theme dir)
 - [ ] Activate theme in Local WP admin
-- [ ] Document any hardcoded production URLs in theme — replace with `home_url()` or relative paths
+- [ ] Audit hardcoded production URLs — see [THEME_OVERVIEW.md](THEME_OVERVIEW.md)
+- [ ] Review debug artifacts (`checkout-debug.js`, `debug-viewer.php`, etc.)
 
 ### Theme cleanup targets
 
 - [ ] Remove unused template files identified during audit
 - [ ] Consolidate duplicate CSS/JS enqueue logic
-- [ ] Verify WooCommerce template overrides in `woocommerce/` subfolder
-- [ ] Check ACF JSON sync folder (`acf-json/`) is present and loads field groups
+- [x] Verify WooCommerce template overrides exist in `woocommerce/` (168 files)
+- [ ] Export ACF field groups to JSON if desired for version control
+- [ ] Resolve theme vs plugin overlap (marketing, how-to videos, klaviyo) — see [THEME_OVERVIEW.md](THEME_OVERVIEW.md)
 
 ## Phase 2 — Custom plugin port
 
-### Identify canonical plugin version
+- [x] Single canonical `plugins/twintack-grip-manager/` (v1.7.05 from production)
+- [x] No duplicate version-suffixed plugin folders
+- [x] All 10 custom TwinTack plugins present — see [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md)
+- [ ] Activate and smoke-test admin screens and front-end hooks (after DB import)
+- [ ] Evaluate merging `twintack-product-save-bypass` + `twintack-admin-console-fixes`
+- [ ] Evaluate consolidating `twintack-marketing` with theme marketing v2 templates
 
-Legacy repo contains multiple grip manager folders. On production, note which plugin folder is **actually active**, then:
+### Custom plugins copied
 
-```bash
-# Example — adjust source folder to match production-active version
-cp -R "$LEGACY/plugins/twintack-grip-manager" "$LOCAL/plugins/"
-```
-
-- [ ] Single canonical `plugins/twintack-grip-manager/` directory
-- [ ] Compare against other version folders — merge missing features, discard duplicates
-- [ ] Normalize folder name (no spaces, no version suffix in directory name)
-- [ ] Update plugin header `Version:` to semver
-- [ ] Activate and smoke-test admin screens and front-end hooks
-
-### Plugin audit worksheet
-
-For each plugin on production, record in [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md):
-
-| Question | Action |
-|----------|--------|
-| Is this custom TwinTack code? | Port to `plugins/` |
-| Is this a free WP.org plugin? | Install fresh, document version |
-| Is this a premium/licensed plugin? | Install from license, document version |
-| Is this unused/disabled on production? | Do not install — note as removed |
-| Are there duplicate custom plugins? | Merge into one, delete extras |
+| Plugin | Version |
+|--------|---------|
+| twintack-grip-manager | 1.7.05 |
+| twintack-custom-grips | 1.2.4 |
+| twintack-manual-order-payments | 4.6.1 |
+| twintack-marketing | 1.2.0 |
+| twintack-enhanced-shop-filters | 1.0.2 |
+| twintack-how-to-videos | 1.1.0 |
+| twintack-admin-console-fixes | 1.0.9 |
+| twintack-product-save-bypass | 1.0.1 |
+| twintack-security | 1.0.0 |
+| twintack-amazon-tracking-bridge | 1.1.0 |
 
 ## Phase 3 — Third-party plugin install
 
-Install (do not copy from legacy repo unless patched):
+Copied from production (present locally, **not tracked in Git**):
 
-- [ ] WooCommerce
-- [ ] Advanced Custom Fields PRO
-- [ ] WooCommerce Stripe Gateway
-- [ ] (Add others from inventory)
+- [x] WooCommerce 10.9.1
+- [x] Advanced Custom Fields PRO 6.8.4
+- [x] WooCommerce Stripe Gateway 10.8.3
+- [x] Wholesale suite (5 plugins)
+- [x] Variation Swatches + Pro 2.3.0
+- [x] Klaviyo, Meta for WooCommerce, Pixel Manager, Solid Affiliate
+- [x] WP-Lister Amazon, QuickBooks integration
+- [x] Admin Menu Editor, Classic Editor, FileBird, SVG Support
+- [x] Advanced Dynamic Pricing 4.13.2
 
-Match production versions where practical for compatibility testing.
+See [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md) for full list and consolidation notes.
 
 ## Phase 4 — Database and media import
 
@@ -83,7 +81,7 @@ Follow [LOCAL_SETUP.md](LOCAL_SETUP.md) Steps 4–5:
 - [ ] URL search-replace completed
 - [ ] Uploads synced
 - [ ] Payment gateways in test mode
-- [ ] Webhooks disabled or pointed to staging
+- [ ] Webhooks disabled or pointed to staging (Klaviyo, Make.com, QuickBooks, Amazon)
 
 ## Phase 5 — Configuration parity
 
@@ -100,14 +98,14 @@ Follow [LOCAL_SETUP.md](LOCAL_SETUP.md) Steps 4–5:
 - [ ] Remove commented-out dead code blocks from port
 - [ ] Ensure no production API keys in theme/plugin source
 - [ ] Run PHPCS or basic lint if theme has config
-- [ ] Commit ported code: `git add themes/ plugins/ docs/ && git commit -m "Port twintack2025 theme and custom plugins from legacy repo"`
+- [ ] Commit custom code: `git add themes/twintack2025 plugins/twintack-* docs/ && git commit -m "Port production theme and TwinTack plugins"`
 
 ## Phase 7 — Sign-off
 
 - [ ] Homepage matches production layout (allow for data differences)
 - [ ] Checkout flow works in Stripe test mode
 - [ ] Custom grip flows tested
-- [ ] `PLUGIN_INVENTORY.md` complete
+- [x] `PLUGIN_INVENTORY.md` populated
 - [ ] Merge `migration/initial-port` → `develop`
 
 ## Files to leave behind (legacy repo)
@@ -118,6 +116,6 @@ Do not port these to the rebuild repo root:
 - `artwork-status-test.php`, `debug-rest-api.php`, etc. — one-off scripts; port only if still needed under `tools/`
 - `claude notes/` — reference only, not production code
 - Duplicate plugin version directories
-- Committed WooCommerce / ACF vendor trees
+- Committed WooCommerce / ACF vendor trees (present locally only, excluded from Git)
 
 If debug scripts are still useful, add them under a `tools/` directory with a README explaining usage and safety (local only).

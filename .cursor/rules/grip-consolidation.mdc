@@ -1,0 +1,23 @@
+---
+description: Custom grip workflow consolidation — Custom Grips is canonical, no GF/Make/Monday
+globs: plugins/twintack-custom-grips/**/*,plugins/twintack-grip-manager/**/*,themes/twintack2025/**/*
+alwaysApply: false
+---
+
+# Grip Workflow Consolidation
+
+**Canonical plugin:** `twintack-custom-grips` — team dashboard, My Custom Grips, statuses, mockups, messaging.
+
+**Retired (remove, do not extend):** Gravity Forms, Make.com, Monday.com.
+
+## Rules
+
+1. New grip workflow features go in **twintack-custom-grips**, not Grip Manager or theme `functions.php`
+2. Do not add Make.com webhook URLs, Monday REST endpoints, or `gform_*` hooks
+3. `_grip_artwork_status` is the single source of truth for production stage — see `plugins/twintack-custom-grips/WORKFLOW.md`
+4. Grip Manager is **legacy infrastructure** until merged — safe to remove Monday/Make code; keep CPT + WC sync until Phase 3
+5. Historical `_grip_monday_*` meta: do not delete from DB; stop displaying in new UI
+
+## Full roadmap
+
+`docs/PLUGIN_CONSOLIDATION.md`
