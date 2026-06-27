@@ -2,7 +2,9 @@
 
 Use this checklist when bringing code from [misterlinderman/twintack](https://github.com/misterlinderman/twintack) and production into the Local rebuild environment.
 
-**Status as of 2026-06-26:** Theme and full production plugin set copied directly from **twintack.com** (not legacy Git repo). Database and media import still pending.
+**Status as of 2026-06-26:** Production theme, plugins, and database are imported into Local. Custom code is committed on branch `consolidation/phase-1-retire-integrations` (pushed). Full media sync and parity testing remain.
+
+**Local URL:** `http://twintack-rebuild-2026.local`
 
 ---
 
@@ -10,9 +12,9 @@ Use this checklist when bringing code from [misterlinderman/twintack](https://gi
 
 - [x] Production plugin list captured — see [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md)
 - [ ] Clone legacy repo for reference (optional): `git clone https://github.com/misterlinderman/twintack.git ~/twintack-legacy`
-- [ ] Export production database (see [LOCAL_SETUP.md](LOCAL_SETUP.md))
-- [ ] Download production `uploads/` folder
-- [ ] Create branch: `git checkout -b migration/initial-port`
+- [x] Export production database — `meoefemy_WPNS6.sql.gz` (store outside Git)
+- [ ] Download production `uploads/` folder (partial sync may exist)
+- [x] Custom code committed — `consolidation/phase-1-retire-integrations` pushed to GitHub
 
 ## Phase 1 — Theme port
 
@@ -21,7 +23,7 @@ Use this checklist when bringing code from [misterlinderman/twintack](https://gi
 - [x] **Did not copy** `twintack2025-previous`
 - [ ] Review theme `style.css` header — bump version on first rebuild release
 - [ ] Run theme asset build if modifying JS pipeline (`npm install` in theme dir)
-- [ ] Activate theme in Local WP admin
+- [x] Activate theme in Local WP admin
 - [ ] Audit hardcoded production URLs — see [THEME_OVERVIEW.md](THEME_OVERVIEW.md)
 - [ ] Review debug artifacts (`checkout-debug.js`, `debug-viewer.php`, etc.)
 
@@ -35,10 +37,10 @@ Use this checklist when bringing code from [misterlinderman/twintack](https://gi
 
 ## Phase 2 — Custom plugin port
 
-- [x] Single canonical `plugins/twintack-grip-manager/` (v1.7.05 from production)
+- [x] Single canonical `plugins/twintack-grip-manager/` (v1.7.06 — Phase 1 integrations removed)
 - [x] No duplicate version-suffixed plugin folders
 - [x] All 10 custom TwinTack plugins present — see [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md)
-- [ ] Activate and smoke-test admin screens and front-end hooks (after DB import)
+- [ ] Activate and smoke-test admin screens and front-end hooks
 - [ ] Evaluate merging `twintack-product-save-bypass` + `twintack-admin-console-fixes`
 - [ ] Evaluate consolidating `twintack-marketing` with theme marketing v2 templates
 
@@ -46,7 +48,7 @@ Use this checklist when bringing code from [misterlinderman/twintack](https://gi
 
 | Plugin | Version |
 |--------|---------|
-| twintack-grip-manager | 1.7.05 |
+| twintack-grip-manager | 1.7.06 |
 | twintack-custom-grips | 1.2.4 |
 | twintack-manual-order-payments | 4.6.1 |
 | twintack-marketing | 1.2.0 |
@@ -63,11 +65,11 @@ Copied from production (present locally, **not tracked in Git**):
 
 - [x] WooCommerce 10.9.1
 - [x] Advanced Custom Fields PRO 6.8.4
-- [x] WooCommerce Stripe Gateway 10.8.3
+- [x] WooCommerce Stripe Gateway 10.8.3 (inactive locally — sandbox)
 - [x] Wholesale suite (5 plugins)
 - [x] Variation Swatches + Pro 2.3.0
-- [x] Klaviyo, Meta for WooCommerce, Pixel Manager, Solid Affiliate
-- [x] WP-Lister Amazon, QuickBooks integration
+- [x] Klaviyo, Meta for WooCommerce, Pixel Manager, Solid Affiliate (integrations inactive locally — sandbox)
+- [x] WP-Lister Amazon, QuickBooks integration (inactive locally — sandbox)
 - [x] Admin Menu Editor, Classic Editor, FileBird, SVG Support
 - [x] Advanced Dynamic Pricing 4.13.2
 
@@ -77,11 +79,11 @@ See [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md) for full list and consolidation n
 
 Follow [LOCAL_SETUP.md](LOCAL_SETUP.md) Steps 4–5:
 
-- [ ] Database imported
-- [ ] URL search-replace completed
-- [ ] Uploads synced
-- [ ] Payment gateways in test mode
-- [ ] Webhooks disabled or pointed to staging (Klaviyo, Make.com, QuickBooks, Amazon)
+- [x] Database imported
+- [x] URL search-replace completed (`twintack.com` → `twintack-rebuild-2026.local`)
+- [ ] Uploads fully synced
+- [x] Payment gateways in test mode / deactivated (sandbox)
+- [x] Outbound webhooks blocked (Make.com removed in Phase 1; sandbox blocks remaining integrations)
 
 ## Phase 5 — Configuration parity
 
@@ -98,15 +100,24 @@ Follow [LOCAL_SETUP.md](LOCAL_SETUP.md) Steps 4–5:
 - [ ] Remove commented-out dead code blocks from port
 - [ ] Ensure no production API keys in theme/plugin source
 - [ ] Run PHPCS or basic lint if theme has config
-- [ ] Commit custom code: `git add themes/twintack2025 plugins/twintack-* docs/ && git commit -m "Port production theme and TwinTack plugins"`
+- [x] Commit custom code — `20f545a` on `consolidation/phase-1-retire-integrations`
 
-## Phase 7 — Sign-off
+## Phase 7 — Consolidation (ongoing)
+
+See [PLUGIN_CONSOLIDATION.md](PLUGIN_CONSOLIDATION.md):
+
+- [x] **Phase 1** — Retire Make.com + Monday.com dead code
+- [ ] **Phase 2** — Replace Gravity Forms with native Custom Grips intake
+- [ ] **Phase 3** — Merge Grip Manager into Custom Grips
+- [ ] **Phase 4** — Theme cleanup (presentation only)
+
+## Phase 8 — Sign-off
 
 - [ ] Homepage matches production layout (allow for data differences)
 - [ ] Checkout flow works in Stripe test mode
-- [ ] Custom grip flows tested
+- [ ] Custom grip flows tested end-to-end
 - [x] `PLUGIN_INVENTORY.md` populated
-- [ ] Merge `migration/initial-port` → `develop`
+- [ ] Merge `consolidation/phase-1-retire-integrations` → `main` via PR
 
 ## Files to leave behind (legacy repo)
 
@@ -117,5 +128,6 @@ Do not port these to the rebuild repo root:
 - `claude notes/` — reference only, not production code
 - Duplicate plugin version directories
 - Committed WooCommerce / ACF vendor trees (present locally only, excluded from Git)
+- Database dumps (`*.sql`, `*.sql.gz`) — import locally, never commit
 
 If debug scripts are still useful, add them under a `tools/` directory with a README explaining usage and safety (local only).

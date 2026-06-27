@@ -66,27 +66,54 @@ WooCommerce variable products, custom grip configurations, ACF field groups, and
 - [ ] Custom grip ordering/management flows work end-to-end in Local
 - [x] Single canonical theme and plugin set with no duplicate version folders
 - [x] Documented plugin keep/remove decisions in `PLUGIN_INVENTORY.md`
-- [ ] Git workflow used for all custom code changes before production
+- [x] Git workflow used for custom code — production port committed; Phase 1 on `consolidation/phase-1-retire-integrations` (pushed)
 
-## Current port status (2026-06-26)
+## Current status (2026-06-26)
 
-Production theme and plugins copied directly from **twintack.com** into Local:
+**Local site:** `http://twintack-rebuild-2026.local` — running with production DB import, `twintack2025` theme active, core TwinTack plugins active. Outbound integrations blocked via `mu-plugins/twintack-local-sandbox.php`.
 
-- **Theme:** `themes/twintack2025/` — see [THEME_OVERVIEW.md](THEME_OVERVIEW.md)
-- **Custom plugins:** 10 `twintack-*` plugins (Grip Manager v1.7.05, Manual Order Payments v4.6.1, etc.)
-- **Third-party plugins:** 22 plugins present locally, versions documented in [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md), excluded from Git
-- **Pending:** Production database + `uploads/` import for full parity
+### What is in the current build
 
-## Consolidation priorities (post-import)
+| Layer | Component | Version | Notes |
+|-------|-----------|---------|-------|
+| Theme | `twintack2025` | 1.0.0 | Active; Make.com webhooks removed |
+| Workflow | `twintack-custom-grips` | 1.2.4 | Canonical team dashboard + customer UI |
+| Infrastructure | `twintack-grip-manager` | 1.7.06 | CPT + WC bridge; Phase 1 integrations removed |
+| Payments | `twintack-manual-order-payments` | 4.6.1 | Inactive locally (sandbox) |
+| Supporting | 7 other `twintack-*` plugins | — | Marketing, filters, security, wholesale fixes, etc. |
+| Third-party | WooCommerce, ACF Pro, wholesale suite, etc. | — | Local only, not in Git |
+| Sandbox | `twintack-local-sandbox.php` | 1.0.0 | Blocks Stripe/Klaviyo/Meta/QuickBooks/Amazon/Make.com |
+
+### Migration progress
+
+| Milestone | Status |
+|-----------|--------|
+| Theme + custom plugins copied from production | Done — in Git |
+| Production database imported + URL replaced | Done |
+| Media (`uploads/`) fully synced | Pending |
+| End-to-end parity testing | Pending |
+
+See [MIGRATION_CHECKLIST.md](MIGRATION_CHECKLIST.md) for the full checklist.
+
+## Consolidation roadmap
 
 See **[PLUGIN_CONSOLIDATION.md](PLUGIN_CONSOLIDATION.md)** for the full roadmap.
 
-1. **Retire Make.com + Monday.com** — legacy artwork/production automation; native workflow lives in `twintack-custom-grips`
+| Phase | Focus | Status |
+|-------|-------|--------|
+| **1** | Retire Make.com + Monday.com dead code | **Complete** — branch pushed to GitHub |
+| **2** | Retire Gravity Forms — native Custom Grips intake | Not started |
+| **3** | Merge Grip Manager → Custom Grips | Not started |
+| **4** | Theme cleanup — presentation only | Not started |
+
+### Remaining consolidation work
+
+1. ~~**Retire Make.com + Monday.com**~~ — done in Phase 1
 2. **Retire Gravity Forms** — replace form intake with native Custom Grips forms; remove theme/Grip Manager GF hooks
 3. **Merge Grip Manager → Custom Grips** — single workflow plugin owns CPT, intake, WC sync, team/customer UI
 4. **Marketing duplication** — theme `template-parts/marketing/v2/` vs `twintack-marketing` plugin
 5. **Wholesale workarounds** — merge or replace `twintack-product-save-bypass` and `twintack-admin-console-fixes`
-6. **Theme cleanup** — remove integration webhooks, GF script fixes, debug artifacts
+6. **Theme cleanup** — GF script fixes, debug artifacts (Make.com webhooks already removed)
 
 ## Legacy reference map
 
