@@ -52,3 +52,7 @@ error_log
 *.swp
 *.swo
 *~
+
+# Database dumps (import locally, never commit)
+*.sql
+*.sql.gz

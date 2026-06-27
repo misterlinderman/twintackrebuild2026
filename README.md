@@ -20,7 +20,7 @@ TwinTack's production site grew over years of direct-to-production development. 
 
 Production is **not** replaced until changes are validated locally.
 
-## Current build (2026-06-26)
+## Current build (2026-06-27)
 
 **Local URL:** `http://twintack-rebuild-2026.local`
 
@@ -39,8 +39,8 @@ Production is **not** replaced until changes are validated locally.
 |-----------|---------|
 | **WordPress core** | Managed by Local at `app/public/` |
 | **Third-party plugins** | 22 plugins copied from production (WooCommerce 10.9.1, ACF Pro 6.8.4, wholesale suite, etc.) |
-| **Database** | Production import (`meoefemy_WPNS6.sql.gz` — **do not commit**) with URL search-replace to local |
-| **Media** | `uploads/` — partially synced; full import still pending |
+| **Database** | Production import with `sCO_` table prefix — **do not commit** dump |
+| **Media** | `uploads/` — synced from production (~3.1 GB) |
 
 ### Grip workflow architecture (today)
 
@@ -74,8 +74,9 @@ Presentation           twintack2025 theme
 | Production DB imported | Done |
 | Theme + core plugins activated | Done |
 | Local sandbox (outbound integrations blocked) | Done |
-| Full media (`uploads/`) sync | Pending |
-| End-to-end parity testing | Pending |
+| Full media (`uploads/`) sync | Done (~3.1 GB from production) |
+| Initial parity testing | Done — team dashboard, product admin, visual layout verified 2026-06-27 |
+| Checkout / full grip workflow E2E | Optional — not yet tested locally |
 
 ### Consolidation roadmap
 
@@ -131,6 +132,7 @@ Local site path (not in repo):
 | [Local Setup Guide](docs/LOCAL_SETUP.md) | Replicate production in Local by Flywheel |
 | [Local Sandbox](docs/LOCAL_SANDBOX.md) | Disable outbound integrations for safe dev |
 | [Migration Checklist](docs/MIGRATION_CHECKLIST.md) | Port and parity checklist |
+| [Parity Testing](docs/PARITY_TESTING.md) | Post-uploads URL fixes and production parity walkthrough |
 | [Plugin Inventory](docs/PLUGIN_INVENTORY.md) | All plugins — keep/remove/consolidate |
 | [Plugin Consolidation](docs/PLUGIN_CONSOLIDATION.md) | GF/Make/Monday retirement roadmap |
 | [Theme Overview](docs/THEME_OVERVIEW.md) | twintack2025 structure and cleanup targets |

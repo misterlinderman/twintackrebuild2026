@@ -66,6 +66,14 @@ Use one of:
 
 ### Import to Local
 
+**Important:** The BlueHost production export uses table prefix **`sCO_`**, not `wp_`. After import, update `wp-config.php`:
+
+```php
+$table_prefix = 'sCO_';
+```
+
+Without this, WordPress will connect to empty `wp_` tables while production data lives in `sCO_*`.
+
 **Option A — Local's Adminer (recommended for first import)**
 
 1. Local → Site → Database → Open Adminer
@@ -118,6 +126,18 @@ rsync -avz --progress /path/to/production/wp-content/uploads/ \
 
 Or use WP Migrate / All-in-One WP Migration media addon for integrated transfer.
 
+### After uploads sync — re-run URL search-replace
+
+Syncing uploads does not update the database, but a **fresh DB import after uploads** (or imports that include attachment meta) often still contains `twintack.com` URLs in post content and serialized options. Always run search-replace again after combining DB + uploads:
+
+```bash
+wp search-replace 'https://twintack.com' 'http://twintack-rebuild-2026.local' --all-tables
+wp search-replace 'http://twintack.com' 'http://twintack-rebuild-2026.local' --all-tables
+wp rewrite flush --hard
+```
+
+Full checklist: [PARITY_TESTING.md](PARITY_TESTING.md).
+
 After copy, regenerate thumbnails if needed:
 
 ```bash
@@ -135,7 +155,9 @@ wp media regenerate --yes
 
 ## Step 7 — Verify parity
 
-Walk through these flows locally:
+Full walkthrough: **[PARITY_TESTING.md](PARITY_TESTING.md)** — post-uploads URL fixes, data volume checks, and page-by-page sign-off.
+
+Quick smoke test:
 
 - [ ] Homepage loads with hero, featured products, and footer
 - [ ] Shop archive and single product pages

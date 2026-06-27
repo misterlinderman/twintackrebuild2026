@@ -2,9 +2,7 @@
 
 Use this checklist when bringing code from [misterlinderman/twintack](https://github.com/misterlinderman/twintack) and production into the Local rebuild environment.
 
-**Status as of 2026-06-26:** Production theme, plugins, and database are imported into Local. Custom code is committed on branch `consolidation/phase-1-retire-integrations` (pushed). Full media sync and parity testing remain.
-
-**Local URL:** `http://twintack-rebuild-2026.local`
+**Status as of 2026-06-27:** Production database re-imported with table prefix `sCO_`. Uploads synced (~3.1 GB). URL search-replace complete. **Initial parity sign-off complete** — team dashboard, product admin, and recent visual changes verified locally.
 
 ---
 
@@ -13,7 +11,7 @@ Use this checklist when bringing code from [misterlinderman/twintack](https://gi
 - [x] Production plugin list captured — see [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md)
 - [ ] Clone legacy repo for reference (optional): `git clone https://github.com/misterlinderman/twintack.git ~/twintack-legacy`
 - [x] Export production database — `meoefemy_WPNS6.sql.gz` (store outside Git)
-- [ ] Download production `uploads/` folder (partial sync may exist)
+- [x] Download production `uploads/` folder — synced from production (~3.1 GB)
 - [x] Custom code committed — `consolidation/phase-1-retire-integrations` pushed to GitHub
 
 ## Phase 1 — Theme port
@@ -40,7 +38,7 @@ Use this checklist when bringing code from [misterlinderman/twintack](https://gi
 - [x] Single canonical `plugins/twintack-grip-manager/` (v1.7.06 — Phase 1 integrations removed)
 - [x] No duplicate version-suffixed plugin folders
 - [x] All 10 custom TwinTack plugins present — see [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md)
-- [ ] Activate and smoke-test admin screens and front-end hooks
+- [x] Activate and smoke-test admin screens and front-end hooks — team dashboard, product edit verified 2026-06-27
 - [ ] Evaluate merging `twintack-product-save-bypass` + `twintack-admin-console-fixes`
 - [ ] Evaluate consolidating `twintack-marketing` with theme marketing v2 templates
 
@@ -80,8 +78,8 @@ See [PLUGIN_INVENTORY.md](PLUGIN_INVENTORY.md) for full list and consolidation n
 Follow [LOCAL_SETUP.md](LOCAL_SETUP.md) Steps 4–5:
 
 - [x] Database imported
-- [x] URL search-replace completed (`twintack.com` → `twintack-rebuild-2026.local`)
-- [ ] Uploads fully synced
+- [x] URL search-replace completed — re-run after each DB re-import; see [PARITY_TESTING.md](PARITY_TESTING.md) Step 1
+- [x] Uploads fully synced from production
 - [x] Payment gateways in test mode / deactivated (sandbox)
 - [x] Outbound webhooks blocked (Make.com removed in Phase 1; sandbox blocks remaining integrations)
 
@@ -113,9 +111,12 @@ See [PLUGIN_CONSOLIDATION.md](PLUGIN_CONSOLIDATION.md):
 
 ## Phase 8 — Sign-off
 
-- [ ] Homepage matches production layout (allow for data differences)
-- [ ] Checkout flow works in Stripe test mode
-- [ ] Custom grip flows tested end-to-end
+Follow [PARITY_TESTING.md](PARITY_TESTING.md) for the full walkthrough.
+
+- [x] Homepage matches production layout — recent visual changes confirmed 2026-06-27
+- [ ] Checkout flow works in Stripe test mode (optional — sandbox off)
+- [ ] Custom grip flows tested end-to-end (mockup upload, customer review, order sync)
+- [x] Team dashboard and product admin verified with production credentials
 - [x] `PLUGIN_INVENTORY.md` populated
 - [ ] Merge `consolidation/phase-1-retire-integrations` → `main` via PR
 
