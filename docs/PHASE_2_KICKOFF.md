@@ -51,7 +51,7 @@ Documented from `class-grip-form-handler.php` field IDs. **Verify against produc
 
 ### Form 9 — New configurator form (`process_new_grip_form`) — production export 2026-06-27
 
-Reference: `gravityforms-export-2026-06-27.json` (repo root, local only)
+Reference: `docs/reference/gravityforms-export-2026-06-27.json`
 
 | GF field ID | Label | Maps to |
 |-------------|-------|---------|
