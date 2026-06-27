@@ -85,7 +85,7 @@ See [Plugin Consolidation](docs/PLUGIN_CONSOLIDATION.md) and **[Phase 2 Kickoff]
 | Phase | Focus | Status |
 |-------|-------|--------|
 | **1** | Retire Make.com + Monday.com dead code | **Complete** — merged to `main` |
-| **2** | Replace Gravity Forms with native Custom Grips intake | **Ready to start** |
+| **2** | Replace Gravity Forms with native Custom Grips intake | **In progress** — scaffold in v1.3.0 |
 | **3** | Merge Grip Manager into Custom Grips | Not started |
 | **4** | Theme cleanup (presentation only, no business logic) | Not started |
 

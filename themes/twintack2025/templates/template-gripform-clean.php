@@ -339,7 +339,13 @@ img {
     <?php while (have_posts()) : the_post(); ?>
         <div class="container">
             <h1 style="text-align: center; margin-bottom: 30px;">Custom Grip Configuration</h1>
-            <?php the_content(); ?>
+            <?php
+            if ( class_exists( 'TTCG_Intake' ) ) {
+                TTCG_Intake::render_form();
+            } else {
+                the_content();
+            }
+            ?>
         </div>
         <?php get_template_part('template-parts/content', 'flexible'); ?>
     <?php endwhile; ?>

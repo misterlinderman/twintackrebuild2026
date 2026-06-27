@@ -161,6 +161,19 @@ git pull origin main
 git checkout -b consolidation/phase-2-native-grip-intake
 ```
 
+### Scaffold landed (plugin v1.3.0)
+
+| Component | Path |
+|-----------|------|
+| Intake handler | `includes/class-custom-grips-intake.php` |
+| Form partial | `templates/partials/customer-intake-form.php` |
+| Shortcode | `[ttcg_grip_intake]` |
+| AJAX action | `ttcg_submit_grip_intake` → deposit in cart |
+| Assets | `assets/css/customer-intake.css`, `assets/js/customer-intake.js` |
+| Theme hook | `template-gripform-clean.php` renders native form |
+
+**Test locally:** Log in → grip configurator page (Clean Grip Form template) → submit → cart should show deposit with grip metadata.
+
 Commit incrementally:
 
 1. GF field mapping doc + native form scaffold

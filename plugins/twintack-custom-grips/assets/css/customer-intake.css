@@ -1,0 +1,153 @@
+/**
+ * Customer native grip intake form styles.
+ *
+ * @package TwinTack_Custom_Grips
+ * @since   1.3.0
+ */
+
+.ttcg-customer-intake {
+    max-width: 720px;
+    margin: 0 auto;
+    font-family: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.ttcg-customer-intake__login-notice {
+    text-align: center;
+    padding: 2rem;
+    background: #1a1a1a;
+    color: #fff;
+    border-radius: 8px;
+}
+
+.ttcg-customer-intake__section {
+    margin-bottom: 1.75rem;
+    padding: 1.25rem;
+    background: #f8f9fa;
+    border: 1px solid #e2e4e7;
+    border-radius: 8px;
+}
+
+.ttcg-customer-intake__section-title {
+    margin: 0 0 1rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.ttcg-customer-intake__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.ttcg-form-row--full {
+    grid-column: 1 / -1;
+}
+
+.ttcg-form-row label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.ttcg-required {
+    color: #c0392b;
+}
+
+.ttcg-input,
+.ttcg-textarea {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.ttcg-input:focus,
+.ttcg-textarea:focus {
+    outline: 2px solid #1a1a1a;
+    border-color: #1a1a1a;
+}
+
+.ttcg-input[readonly] {
+    background: #eee;
+    color: #555;
+}
+
+.ttcg-customer-intake__hint,
+.ttcg-customer-intake__deposit-note {
+    margin: 0.35rem 0 0;
+    font-size: 0.875rem;
+    color: #555;
+}
+
+.ttcg-customer-intake__actions {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.ttcg-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.ttcg-btn--primary {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+.ttcg-btn--primary:hover {
+    background: #333;
+    color: #fff;
+}
+
+.ttcg-btn--primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ttcg-btn--large {
+    padding: 1rem 2rem;
+    font-size: 1.05rem;
+}
+
+.ttcg-customer-intake__feedback {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    display: none;
+}
+
+.ttcg-customer-intake__feedback:not(:empty) {
+    display: block;
+}
+
+.ttcg-customer-intake__feedback--error {
+    background: #fdecea;
+    color: #c0392b;
+    border: 1px solid #f5c6cb;
+}
+
+.ttcg-customer-intake__feedback--success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+@media (max-width: 640px) {
+    .ttcg-customer-intake__grid {
+        grid-template-columns: 1fr;
+    }
+}

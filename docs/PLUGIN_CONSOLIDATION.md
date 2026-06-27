@@ -127,13 +127,21 @@ This plugin **gains** responsibility during consolidation:
 
 **Merged:** `consolidation/phase-1-retire-integrations` → `main`
 
-### Phase 2 — Replace Gravity Forms intake (medium risk) 🟡 Ready to start
+### Phase 2 — Replace Gravity Forms intake (medium risk) 🟡 In progress
 
-**Kickoff doc:** [PHASE_2_KICKOFF.md](PHASE_2_KICKOFF.md)
+**Kickoff doc:** [PHASE_2_KICKOFF.md](PHASE_2_KICKOFF.md)  
+**Branch:** `consolidation/phase-2-native-grip-intake`
+
+**Scaffold (v1.3.0):**
+
+- [x] `TTCG_Intake` class — AJAX submit, cart metadata, artwork upload
+- [x] `[ttcg_grip_intake]` shortcode + `customer-intake-form.php` partial
+- [x] Theme `template-gripform-clean.php` renders native form when plugin active
+- [ ] Remove GF hooks from Grip Manager (after native form verified)
+- [ ] Remove theme GF script workarounds
+- [ ] Production GF deactivation
 
 **Prerequisite:** Document current GF form fields (forms 8/9) and map to Custom Grips form.
-
-**Suggested branch:** `consolidation/phase-2-native-grip-intake`
 
 1. Build native intake form in `twintack-custom-grips` (AJAX + validation + file upload)
 2. Port `class-grip-form-handler.php` cart/deposit logic to Custom Grips
