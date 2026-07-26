@@ -24,7 +24,6 @@ class TwinTack_Grip_Admin {
         
         // Handle AJAX requests
         add_action('wp_ajax_test_grip_email', array($this, 'handle_test_email_ajax'));
-        add_action('wp_ajax_grip_import_gf_entry', array($this, 'handle_gf_import_ajax'));
         
         // Add product meta boxes for volume pricing
         add_action('add_meta_boxes', array($this, 'add_volume_pricing_meta_boxes'));
@@ -369,16 +368,6 @@ class TwinTack_Grip_Admin {
     }
 
     public function add_meta_boxes() {
-        // Gravity Forms Importer (top priority for new posts)
-        add_meta_box(
-            'grip_gf_importer',
-            'Import from Gravity Forms',
-            array($this, 'render_gf_importer_meta_box'),
-            'grip_design',
-            'side',
-            'high'
-        );
-        
         add_meta_box(
             'grip_design_details',
             'Grip Design Details',
@@ -512,7 +501,7 @@ class TwinTack_Grip_Admin {
                            value="<?php echo esc_attr($artwork_url); ?>" 
                            class="widefat" 
                            placeholder="https://twintack.com/wp-content/uploads/..." />
-                    <span class="description">Paste the direct URL to the artwork file (from Gravity Forms uploads or Media Library)</span>
+                    <span class="description">Paste the direct URL to the artwork file (Media Library or uploads folder)</span>
                 </p>
                 
                 <p>
@@ -571,163 +560,6 @@ class TwinTack_Grip_Admin {
     }
     
     /**
-     * Render Gravity Forms Importer meta box
-     */
-    public function render_gf_importer_meta_box($post) {
-        $current_entry_id = get_post_meta($post->ID, '_grip_form_entry_id', true);
-        ?>
-        <div class="grip-gf-importer">
-            <p>
-                <label for="gf_entry_id"><strong>Gravity Forms Entry ID:</strong></label><br>
-                <input type="number" id="gf_entry_id" name="gf_entry_lookup" 
-                       value="<?php echo esc_attr($current_entry_id); ?>" 
-                       class="widefat" 
-                       placeholder="849" 
-                       min="1" />
-            </p>
-            
-            <p>
-                <button type="button" class="button button-primary grip-import-gf-btn" style="width: 100%;">
-                    📥 Import Data from Entry
-                </button>
-            </p>
-            
-            <?php if ($current_entry_id): ?>
-                <p class="description">
-                    Currently linked to entry #<?php echo esc_html($current_entry_id); ?>
-                    <?php if (class_exists('GFAPI')): ?>
-                        <br><a href="<?php echo admin_url('admin.php?page=gf_entries&view=entry&id=9&lid=' . $current_entry_id); ?>" target="_blank">View Entry →</a>
-                    <?php endif; ?>
-                </p>
-            <?php else: ?>
-                <p class="description">
-                    Enter the Gravity Forms entry ID to import customer and design data.
-                </p>
-            <?php endif; ?>
-            
-            <div class="grip-import-result" style="margin-top: 15px; padding: 10px; display: none; border-left: 4px solid #00a0d2; background: #f0f8ff;"></div>
-        </div>
-        
-        <script>
-        jQuery(document).ready(function($) {
-            $('.grip-import-gf-btn').on('click', function(e) {
-                e.preventDefault();
-                var button = $(this);
-                var entryId = $('#gf_entry_id').val();
-                var postId = <?php echo (int) $post->ID; ?>;
-                var resultDiv = $('.grip-import-result');
-                
-                if (!entryId) {
-                    alert('Please enter a Gravity Forms entry ID');
-                    return;
-                }
-                
-                button.prop('disabled', true).text('⏳ Importing...');
-                resultDiv.hide();
-                
-                $.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    data: {
-                        action: 'grip_import_gf_entry',
-                        entry_id: entryId,
-                        post_id: postId,
-                        nonce: '<?php echo wp_create_nonce('grip_import_gf_' . $post->ID); ?>'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            // Use warning color if there are missing fields, success color otherwise
-                            var borderColor = response.data.has_warnings ? '#f0b849' : '#46b450';
-                            var bgColor = response.data.has_warnings ? '#fff8e5' : '#f0f8ff';
-                            
-                            resultDiv.css({
-                                'border-left-color': borderColor,
-                                'background': bgColor
-                            })
-                            .html(response.data.message)
-                            .show();
-                            
-                            // Populate fields with imported data
-                            if (response.data.fields) {
-                                var fields = response.data.fields;
-                                for (var key in fields) {
-                                    var input = $('[name="' + key + '"]');
-                                    if (input.length && fields[key]) {
-                                        input.val(fields[key]);
-                                        // Remove any previous highlighting
-                                        input.css('background', '');
-                                    }
-                                }
-                            }
-                            
-                            // Highlight empty required fields
-                            if (response.data.missing_fields && response.data.missing_fields.length > 0) {
-                                // Highlight Team/School Name if missing (most critical)
-                                if ($('[name="_grip_team_name"]').val() === '') {
-                                    $('[name="_grip_team_name"]').css('background', '#fff3cd');
-                                }
-                                // Highlight Customer Name if missing
-                                if ($('[name="_grip_customer_name"]').val() === '') {
-                                    $('[name="_grip_customer_name"]').css('background', '#fff3cd');
-                                }
-                                
-                                // Show reminder to fill missing fields
-                                resultDiv.append('<br><br><strong>→ Please fill the highlighted fields above and save.</strong>');
-                                
-                                // Don't auto-save if fields are missing
-                            } else {
-                                // All fields complete - suggest saving
-                                setTimeout(function() {
-                                    if (confirm('All data imported! Would you like to save now?')) {
-                                        $('#publish').click();
-                                    }
-                                }, 1000);
-                            }
-                        } else {
-                            resultDiv.css('border-left-color', '#dc3232')
-                                    .html('<strong>✗ Error:</strong><br>' + response.data.message)
-                                    .show();
-                        }
-                    },
-                    error: function() {
-                        resultDiv.css('border-left-color', '#dc3232')
-                                .html('<strong>✗ Error:</strong><br>Failed to connect to server')
-                                .show();
-                    },
-                    complete: function() {
-                        button.prop('disabled', false).text('📥 Import Data from Entry');
-                    }
-                });
-            });
-        });
-        </script>
-        
-        <style>
-        .grip-gf-importer .button-primary {
-            background: #0073aa;
-            border-color: #0073aa;
-        }
-        .grip-gf-importer .button-primary:hover {
-            background: #005177;
-            border-color: #005177;
-        }
-        .grip-import-result strong {
-            display: block;
-            margin-bottom: 8px;
-        }
-        .grip-import-result ul {
-            margin: 8px 0;
-            padding-left: 20px;
-        }
-        input[name="_grip_team_name"]:required,
-        input[name="_grip_customer_name"]:required {
-            border-left: 3px solid #f0b849;
-        }
-        </style>
-        <?php
-    }
-    
-    /**
      * Render System Info meta box
      */
     public function render_system_info_meta_box($post) {
@@ -746,17 +578,14 @@ class TwinTack_Grip_Admin {
                        value="<?php echo esc_attr($form_entry_id); ?>" 
                        class="widefat" 
                        min="1" />
-                <?php if ($form_entry_id && class_exists('GFAPI')): ?>
-                    <small><a href="<?php echo admin_url('admin.php?page=gf_entries&view=entry&id=9&lid=' . $form_entry_id); ?>" target="_blank">View Entry →</a></small>
-                <?php endif; ?>
             </p>
             
             <p>
-                <label for="_grip_form_type"><strong>Form Type:</strong></label><br>
+                <label for="_grip_form_type"><strong>Intake Source:</strong></label><br>
                 <select id="_grip_form_type" name="_grip_form_type" class="widefat">
                     <option value="">-- Select --</option>
-                    <option value="new" <?php selected($form_type, 'new'); ?>>New Form (ID 9)</option>
-                    <option value="original" <?php selected($form_type, 'original'); ?>>Original Form (ID 8)</option>
+                    <option value="new" <?php selected($form_type, 'new'); ?>>Native configurator</option>
+                    <option value="original" <?php selected($form_type, 'original'); ?>>Legacy form 8</option>
                 </select>
             </p>
             
@@ -962,195 +791,5 @@ class TwinTack_Grip_Admin {
                 wp_enqueue_media();
             }
         }
-    }
-    
-    /**
-     * Handle Gravity Forms import AJAX request
-     */
-    public function handle_gf_import_ajax() {
-        // Check permissions
-        if (!current_user_can('edit_posts')) {
-            wp_send_json_error(array('message' => 'Unauthorized'));
-            return;
-        }
-        
-        // Verify nonce
-        $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
-        if (!wp_verify_nonce($_POST['nonce'], 'grip_import_gf_' . $post_id)) {
-            wp_send_json_error(array('message' => 'Invalid security token'));
-            return;
-        }
-        
-        // Check if Gravity Forms is available
-        if (!class_exists('GFAPI')) {
-            wp_send_json_error(array('message' => 'Gravity Forms is not active'));
-            return;
-        }
-        
-        $entry_id = isset($_POST['entry_id']) ? intval($_POST['entry_id']) : 0;
-        
-        if (!$entry_id) {
-            wp_send_json_error(array('message' => 'No entry ID provided'));
-            return;
-        }
-        
-        // Get the entry
-        $entry = GFAPI::get_entry($entry_id);
-        
-        if (is_wp_error($entry)) {
-            wp_send_json_error(array('message' => 'Entry not found: ' . $entry->get_error_message()));
-            return;
-        }
-        
-        // Determine which form this is from
-        $form_id = $entry['form_id'];
-        $form_type = ($form_id == 9) ? 'new' : 'original';
-        
-        // Extract data from entry
-        // Field mappings for both forms:
-        // 1.3 = First Name, 1.6 = Last Name
-        // 8 = Team/School Name
-        // 12 = Design Type/Layout
-        // 21 = Quantity
-        // 9 = File Upload
-        // 14 = Feedback/Design Instructions
-        // 41 = Primary Color (new form)
-        // 42 = Secondary Color (new form)
-        // 43 = Tertiary Color (new form)
-        
-        $first_name = rgar($entry, '1.3');
-        $last_name = rgar($entry, '1.6');
-        $customer_name = trim($first_name . ' ' . $last_name);
-        $customer_email = rgar($entry, '2'); // Email field
-        $team_name = rgar($entry, '8');
-        $quantity = rgar($entry, '21');
-        $file_upload = rgar($entry, '9');
-        $feedback = rgar($entry, '14');
-        
-        // Get the appropriate design type
-        $design_layout = rgar($entry, '12');
-        $primary_color = rgar($entry, '41');
-        $secondary_color = rgar($entry, '42');
-        $tertiary_color = rgar($entry, '43');
-        
-        // Construct design type
-        if ($form_type === 'new') {
-            $design_type = $design_layout;
-            if ($design_layout != 'Solid Color') {
-                $colors = $primary_color;
-                if (!empty($secondary_color)) {
-                    $colors .= " + " . $secondary_color;
-                }
-                if (!empty($tertiary_color)) {
-                    $colors .= " + " . $tertiary_color;
-                }
-                $design_type .= " (" . $colors . ")";
-            } else {
-                $design_type .= " (" . $primary_color . ")";
-            }
-        } else {
-            $design_type = rgar($entry, '12'); // Original form just has the design type directly
-        }
-        
-        // Extract filename from upload
-        $filename = !empty($file_upload) ? basename($file_upload) : '';
-        
-        // Track what's missing for helpful feedback
-        $missing_fields = array();
-        $warnings = array();
-        
-        if (empty($customer_name)) {
-            $missing_fields[] = 'Customer Name';
-            $warnings[] = '⚠️ Customer Name is missing - please add manually';
-        }
-        
-        if (empty($team_name)) {
-            $missing_fields[] = 'Team/School Name';
-            $warnings[] = '⚠️ Team/School Name is REQUIRED - please add manually';
-        }
-        
-        if (empty($quantity)) {
-            $missing_fields[] = 'Quantity';
-            $warnings[] = '⚠️ Quantity is missing - please add manually';
-        }
-        
-        if (empty($file_upload)) {
-            $missing_fields[] = 'Artwork';
-            $warnings[] = '⚠️ No artwork file uploaded in form - add via upload or URL';
-        }
-        
-        // Update the grip design post with whatever data is available
-        $meta_updates = array(
-            '_grip_customer_name' => $customer_name,
-            '_grip_customer_email' => $customer_email,
-            '_grip_team_name' => $team_name,
-            '_grip_design_type' => $design_type,
-            '_grip_quantity' => $quantity,
-            '_grip_artwork_url' => $file_upload,
-            '_grip_artwork_filename' => $filename,
-            '_grip_feedback' => $feedback,
-            '_grip_form_entry_id' => $entry_id,
-            '_grip_form_type' => $form_type,
-            '_grip_timestamp' => strtotime($entry['date_created'])
-        );
-        
-        // Add new form specific fields
-        if ($form_type === 'new') {
-            $meta_updates['_grip_design_layout'] = $design_layout;
-            $meta_updates['_grip_primary_color'] = $primary_color;
-            $meta_updates['_grip_secondary_color'] = $secondary_color;
-            $meta_updates['_grip_tertiary_color'] = $tertiary_color;
-        }
-        
-        // Update all meta fields
-        foreach ($meta_updates as $meta_key => $meta_value) {
-            update_post_meta($post_id, $meta_key, $meta_value);
-        }
-        
-        // Update post title if this is a new post
-        $post = get_post($post_id);
-        if ($post && ($post->post_title === 'Auto Draft' || empty($post->post_title))) {
-            $date_suffix = current_time('ymd');
-            $new_title = sprintf('Custom Grip - %s %s', $team_name, $date_suffix);
-            wp_update_post(array(
-                'ID' => $post_id,
-                'post_title' => $new_title
-            ));
-        }
-        
-        // Prepare response with imported data
-        $response_fields = array();
-        foreach ($meta_updates as $meta_key => $meta_value) {
-            $response_fields[$meta_key] = $meta_value;
-        }
-        
-        // Build success message
-        $message_parts = array();
-        $imported_count = 0;
-        
-        // Count non-empty imported fields
-        foreach ($meta_updates as $value) {
-            if (!empty($value)) {
-                $imported_count++;
-            }
-        }
-        
-        $message_parts[] = sprintf('✓ Imported %d fields from entry #%d', $imported_count, $entry_id);
-        
-        if (!empty($missing_fields)) {
-            $message_parts[] = sprintf('<br><strong>Missing %d field(s):</strong>', count($missing_fields));
-            $message_parts = array_merge($message_parts, $warnings);
-        } else {
-            $message_parts[] = '<br><strong>✓ All fields complete!</strong>';
-        }
-        
-        wp_send_json_success(array(
-            'message' => implode('<br>', $message_parts),
-            'fields' => $response_fields,
-            'entry_id' => $entry_id,
-            'form_type' => $form_type,
-            'missing_fields' => $missing_fields,
-            'has_warnings' => !empty($missing_fields)
-        ));
     }
 }

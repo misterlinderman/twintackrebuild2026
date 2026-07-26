@@ -2,7 +2,7 @@
 /**
  * Plugin Name: TwinTack Custom Grips
  * Description: Frontend team dashboard for managing custom grip design submissions. Provides art and production team workflows, threaded messaging, mockup uploads, and customer communication — all from the frontend.
- * Version: 1.3.0
+ * Version: 1.4.8
  * Author: TwinTack Team
  * Requires at least: 5.8
  * Requires PHP: 7.4
@@ -14,10 +14,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants
-define( 'TTCG_VERSION', '1.3.0' );
+define( 'TTCG_VERSION', '1.4.8' );
 define( 'TTCG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'TTCG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'TTCG_PLUGIN_FILE', __FILE__ );
+
+/**
+ * Restore query-string action/nonce when POST sends blank values (POST wins in $_REQUEST → admin-ajax 400).
+ */
+function ttcg_fix_ajax_request_params() {
+    foreach ( array( 'action', 'nonce' ) as $param ) {
+        $request_val = isset( $_REQUEST[ $param ] ) ? wp_unslash( $_REQUEST[ $param ] ) : null;
+        $get_val     = isset( $_GET[ $param ] ) ? wp_unslash( $_GET[ $param ] ) : null;
+
+        if ( ( ! is_scalar( $request_val ) || '' === $request_val ) && is_scalar( $get_val ) && '' !== $get_val ) {
+            $_REQUEST[ $param ] = $get_val;
+        }
+    }
+}
+add_action( 'wp_loaded', 'ttcg_fix_ajax_request_params', 0 );
 
 /**
  * Main plugin class — singleton pattern.
@@ -67,16 +82,16 @@ class TwinTack_Custom_Grips {
             return;
         }
 
-        // Dependency: Grip Manager (for the grip_design CPT)
+        // Load includes (intake/configurator must work when WC is available).
+        $this->load_includes();
+        TTCG_Intake::get_instance();
+
+        // Grip Manager powers order→post creation; warn but do not block the configurator.
         if ( ! post_type_exists( 'grip_design' ) && ! class_exists( 'TwinTack_Grip_Manager' ) ) {
             add_action( 'admin_notices', array( $this, 'notice_grip_manager_missing' ) );
-            return;
         }
 
-        // Load includes
-        $this->load_includes();
-
-        // Initialize components
+        // Initialize remaining components
         TTCG_Roles::get_instance();
         TTCG_Router::get_instance();
         TTCG_Dashboard::get_instance();
@@ -87,7 +102,6 @@ class TwinTack_Custom_Grips {
         TTCG_Notifications::get_instance();
         TTCG_Admin::get_instance();
         TTCG_Customer::get_instance();
-        TTCG_Intake::get_instance();
 
         // Enqueue customer-facing messaging scripts on My Account grip designs page
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_customer_scripts' ) );
@@ -118,6 +132,7 @@ class TwinTack_Custom_Grips {
             'class-custom-grips-notifications',
             'class-custom-grips-admin',
             'class-custom-grips-customer',
+            'class-custom-grips-intake-config',
             'class-custom-grips-intake',
         );
 
@@ -314,6 +329,78 @@ class TwinTack_Custom_Grips {
         echo '</p></div>';
     }
 }
+
+/**
+ * Load the intake handler when WooCommerce is available.
+ *
+ * @return TTCG_Intake|null
+ */
+function ttcg_ensure_intake_loaded() {
+    if ( class_exists( 'TTCG_Intake', false ) ) {
+        return TTCG_Intake::get_instance();
+    }
+
+    if ( ! class_exists( 'WooCommerce' ) ) {
+        return null;
+    }
+
+    require_once TTCG_PLUGIN_DIR . 'includes/class-custom-grips-intake-config.php';
+    require_once TTCG_PLUGIN_DIR . 'includes/class-custom-grips-intake.php';
+
+    return TTCG_Intake::get_instance();
+}
+
+/**
+ * AJAX dispatchers — registered at plugin load so admin-ajax always finds the hooks.
+ */
+function ttcg_ajax_submit_grip_intake() {
+    $intake = ttcg_ensure_intake_loaded();
+    if ( ! $intake ) {
+        wp_send_json_error(
+            array( 'message' => __( 'WooCommerce is required for custom grip orders.', 'twintack-custom-grips' ) ),
+            503
+        );
+    }
+    $intake->handle_submit();
+}
+
+function ttcg_ajax_submit_grip_intake_nopriv() {
+    $intake = ttcg_ensure_intake_loaded();
+    if ( ! $intake ) {
+        wp_send_json_error(
+            array( 'message' => __( 'WooCommerce is required for custom grip orders.', 'twintack-custom-grips' ) ),
+            503
+        );
+    }
+    $intake->handle_submit_nopriv();
+}
+
+add_action( 'wp_ajax_ttcg_submit_grip_intake', 'ttcg_ajax_submit_grip_intake', 1 );
+add_action( 'wp_ajax_nopriv_ttcg_submit_grip_intake', 'ttcg_ajax_submit_grip_intake_nopriv', 1 );
+
+/**
+ * Frontend submit endpoint via WooCommerce wc-ajax (avoids admin-ajax.php action routing issues).
+ */
+function ttcg_register_wc_ajax_intake() {
+    add_action( 'wc_ajax_ttcg_submit_grip_intake', 'ttcg_wc_ajax_submit_grip_intake' );
+}
+add_action( 'init', 'ttcg_register_wc_ajax_intake', 20 );
+
+function ttcg_wc_ajax_submit_grip_intake() {
+    if ( ! is_user_logged_in() ) {
+        ttcg_ajax_submit_grip_intake_nopriv();
+        return;
+    }
+    ttcg_ajax_submit_grip_intake();
+}
+
+/**
+ * Bootstrap intake UI/components after WooCommerce loads.
+ */
+function ttcg_bootstrap_intake_ajax() {
+    ttcg_ensure_intake_loaded();
+}
+add_action( 'plugins_loaded', 'ttcg_bootstrap_intake_ajax', 5 );
 
 // Boot the plugin
 TwinTack_Custom_Grips::get_instance();

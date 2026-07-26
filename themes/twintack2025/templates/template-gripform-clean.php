@@ -54,9 +54,8 @@ add_action('init', function() {
     remove_action('wp_head', 'gtm4wp_wp_header_top');
     remove_action('wp_footer', 'gtm4wp_wp_footer');
     
-    // Block only Facebook Pixel script (not Gravity Forms)
+    // Block marketing/analytics scripts that interfere with the configurator iframe.
     add_filter('script_loader_tag', function($tag, $handle, $src) {
-        // Only block Facebook scripts, allow everything else including Gravity Forms
         if (strpos($src, 'connect.facebook.net') !== false || strpos($src, 'fbevents.js') !== false) {
             return '';
         }
@@ -162,44 +161,6 @@ footer#colophon {
     margin-left: auto;
 }
 
-/* Gravity Forms styling */
-.gform-theme--api, .gform-theme--foundation {
-    --gf-form-gap-y: 20px;
-    --gf-field-gap-y: 12px;
-}
-
-.gform-theme--framework .gfield--type-image_choice .gfield_checkbox, 
-.gform-theme--framework .gfield--type-image_choice .gfield_radio {
-    gap: 3px;
-}
-
-/* Ensure form elements stay within bounds */
-.gform-theme--framework {
-    overflow-x: hidden;
-}
-
-.gform-theme--api, .gform-theme--framework {
-    --gf-field-img-choice-size-md: 49%;
-}
-
-.gform-theme--framework .gfield--type-image_choice .gfield-choice-image {
-    inline-size: 170px;
-    max-block-size: 170px;
-    max-inline-size: 170px;
-    rotate: -90deg;
-}
-
-.gform-theme--framework .gfield--type-image_choice .gfield-image-choice-wrapper-outer {
-    display: block;
-    min-block-size: 100%;
-    padding-top: 0 !important;
-}
-
-.gfield-choice-image-wrapper {
-    width: 100%;
-    height: 130px;
-}
-
 /* Basic navigation for clean template */
 .clean-nav {
     background: #1a1a1a;
@@ -239,11 +200,6 @@ footer#colophon {
 @media (max-width: 768px) {
     .clean-grip-form-content {
         padding: 15px 0 0;
-    }
-    
-    .gform-theme--api, .gform-theme--foundation {
-        --gf-form-gap-y: 15px;
-        --gf-field-gap-y: 10px;
     }
     
     .clean-nav .container {

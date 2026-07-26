@@ -185,14 +185,6 @@ p {
     margin: calc(var(--spacing-unit) * 2) 0;
 }
 
-.gform_wrapper {
-    margin: 0 !important;
-}
-
-.gfield {
-    margin-bottom: var(--spacing-unit) !important;
-}
-
 /* Core Styling Theme Test Build 1 241215 */
 /* Main Theme Colors */
 :root {

@@ -91,46 +91,14 @@ header#masthead {
     padding: 0 0 0.3rem 0;
 }
 
-/*Custom Form Styles*/
-.color-selector span.gfield-image-choice-wrapper-outer {
-    --gf-local-shadow: none !important;
-    width: 100px !important;
-}
-
-.color-selector .gchoice {
-    border: none !important;
-    --gf-local-shadow: none !important;
-    background-color: none !important;
-}
-
-.gform-theme--framework .gfield--type-image_choice .color-selector .gchoice {
-    align-self: initial;
-    display: block;
-    inline-size: initial;
-    max-inline-size: initial;
-    min-inline-size: initial;
-    position: relative;
-}
-
-.color-selector .gfield-choice-image-wrapper {
-    width: 113px !important;
-    height: 90px !important;
-    display: block;
-}
-
-.color-selector .gchoice {
-    width: 110px !important;
-    display: block;
-}
-
-.color-selector img {
-    width: 70px !important;
-    height: 30px !important;
-    display: block;
+body.page-id-915 .entry-content {
+    color: var(--color-text);
+    font-size: 1.5rem;
 }
 
 
-/* Content Styles */
+
+/* Cart and Checkout Styles */
 section#shop-custom {
     background-color: white;
 }
@@ -464,109 +432,6 @@ body.page-id-747 {
     border-radius: 5px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     color: white;
-}
-
-
-
-/* Custom Grip Intake Form */
-.gform-page-footer.gform_page_footer.top_label {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 3rem;
-}
-
-.gform-theme--framework .gf_progressbar .percentbar_blue {
-    background-color: var(--color-highlight) !important;
-}
-
-p.gf_progressbar_title {
-    color: var(--color-text) !important;
-    font-size: 1em !important;
-}
-
-h3.gsection_title {
-    color: var(--color-text);
-}
-
-legend.gfield_label.gform-field-label.gfield_label_before_complex {
-    color: var(--color-text);
-    font-size: 1.2em;
-}
-
-.gform-page-footer input.gform-theme-button {
-    background-color: var(--color-highlight) !important;
-    color: var(--color-primary) !important;
-    font-size: 1.2em !important;
-}
-
-.gform-theme--framework .gfield--type-image_choice.gfield--image-choice-appearance-card .gchoice {
-    background-color: var(--color-accent) !important;
-}
-
-.gform-theme--framework .gfield--type-image_choice.gfield--image-choice-appearance-card .gchoice .gform-field-label {
-    color: var(--color-text) !important;
-    --gf-local-color: var(--color-text) !important;
-    font-size: 1em;
-}
-
-label.gfield_label.gform-field-label {
-    color: var(--color-text) !important;
-    font-size: 1.2em;
-}
-
-.gform-theme--foundation .gform_fields {
-    color: var(--color-text) !important;
-}
-
-.design-fee-notice p, .design-fee-notice ul {
-    font-size: 1.2em;
-}
-
-.gform-theme--foundation .gfield .ginput_password.large, .gform-theme--foundation .gfield input.large, .gform-theme--foundation .gfield select.large {
-    font-size: 1.5em;
-    font-weight: bold;
-}
-
-label.gform-field-label.gform-field-label--type-sub-large.ginput_product_price_label {
-    color: var(--color-text) !important;
-    font-size: 2em;
-}
-
-.gform-theme--framework .gfield--type-product input[type].ginput_product_price {
-    color: var(--color-highlight) !important;
-    font-size: 2em;
-}
-
-.gform-theme--framework .gform-field-label--type-inline:where(:not(.gform-theme__disable):not(.gform-theme__disable *):not(.gform-theme__disable-framework):not(.gform-theme__disable-framework *)) {
-    color: var(--color-text) !important;
-    font-size: 1em;
-}
-
-.gform-theme--framework .gform-field-label--type-sub:where(:not(.gform-theme__disable):not(.gform-theme__disable *):not(.gform-theme__disable-framework):not(.gform-theme__disable-framework *)) {
-    color: var(--color-highlight) !important;
-}
-
-input#gform_submit_button_9 {
-    background-color: var(--color-text);
-    color: var(--color-primary);
-    font-size: 2em;
-    font-weight: bold;
-    text-transform: uppercase;
-    padding: 0.3em;
-    max-width: 50%;
-}
-
-input#input_9_1_3, input#input_9_1_6, input#input_9_13_1, input#input_9_13_3, input#input_9_13_5, input#input_9_13_4, input#input_9_3, input#input_9_4 {
-    font-size: 1.1em;
-}
-
-textarea#input_9_14 {
-    font-size: 1.2em;
-}
-
-body.page-id-915 .entry-content {
-    color: var(--color-text);
-    font-size: 1.5rem;
 }
 
 

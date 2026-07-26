@@ -1,9 +1,9 @@
 <?php
 /**
- * Customer native grip intake form (replaces Gravity Forms on public order pages).
+ * Customer native grip intake wizard (replaces Gravity Forms form 9).
  *
  * @package TwinTack_Custom_Grips
- * @since   1.3.0
+ * @since   1.4.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,9 +13,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 $current_user = wp_get_current_user();
 $redirect_to  = home_url( isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '/' );
 $login_url    = add_query_arg( 'redirect_to', rawurlencode( $redirect_to ), site_url( '/login/' ) );
+
+$steps    = TTCG_Intake_Config::get_steps();
+$layouts  = TTCG_Intake_Config::get_design_layouts();
+$colors   = TTCG_Intake_Config::get_colors();
+$quantities = TTCG_Intake_Config::get_quantity_options();
+$default_qty = TTCG_Intake::MIN_QUANTITY;
+$max_upload_label = size_format( wp_max_upload_size() );
+
+$billing_phone = get_user_meta( $current_user->ID, 'billing_phone', true );
+if ( empty( $billing_phone ) && class_exists( 'WC_Customer' ) ) {
+    $wc_customer = new WC_Customer( $current_user->ID );
+    $billing_phone = $wc_customer->get_billing_phone();
+}
 ?>
 
-<div class="ttcg-customer-intake" id="ttcg-customer-intake">
+<div class="ttcg-customer-intake ttcg-customer-intake--wizard" id="ttcg-customer-intake">
 
     <?php if ( ! is_user_logged_in() ) : ?>
         <div class="ttcg-customer-intake__login-notice">
@@ -29,91 +42,207 @@ $login_url    = add_query_arg( 'redirect_to', rawurlencode( $redirect_to ), site
         </div>
     <?php else : ?>
 
-        <form id="ttcg-customer-intake-form" class="ttcg-customer-intake__form" enctype="multipart/form-data" novalidate>
+        <div class="ttcg-intake-wizard__header">
+            <h2 class="ttcg-intake-wizard__title"><?php esc_html_e( 'GRIP CONFIGURATOR', 'twintack-custom-grips' ); ?></h2>
+            <p class="ttcg-intake-wizard__step-label" id="ttcg-intake-step-label">
+                <?php
+                printf(
+                    /* translators: 1: current step number, 2: total steps, 3: step title */
+                    esc_html__( 'Step %1$d of %2$d - %3$s', 'twintack-custom-grips' ),
+                    1,
+                    count( $steps ),
+                    esc_html( $steps[0] )
+                );
+                ?>
+            </p>
+            <div class="ttcg-intake-wizard__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25">
+                <div class="ttcg-intake-wizard__progress-bar" id="ttcg-intake-progress-bar" style="width: 25%;"></div>
+            </div>
+        </div>
 
-            <div class="ttcg-customer-intake__section">
-                <h3 class="ttcg-customer-intake__section-title"><?php esc_html_e( 'Your Information', 'twintack-custom-grips' ); ?></h3>
-                <div class="ttcg-customer-intake__grid">
-                    <div class="ttcg-form-row">
-                        <label for="ttcg-intake-first_name"><?php esc_html_e( 'First Name', 'twintack-custom-grips' ); ?> <span class="ttcg-required">*</span></label>
-                        <input type="text" id="ttcg-intake-first_name" name="first_name" class="ttcg-input" required
-                               value="<?php echo esc_attr( $current_user->first_name ); ?>">
+        <form id="ttcg-customer-intake-form" class="ttcg-intake-wizard__form" enctype="multipart/form-data" novalidate>
+
+            <!-- Step 1: Pattern & Colors -->
+            <div class="ttcg-intake-step" data-step="1">
+                <h3 class="ttcg-intake-step__heading"><?php esc_html_e( 'Select Your Pattern and Colors', 'twintack-custom-grips' ); ?></h3>
+
+                <fieldset class="ttcg-image-choice" data-field="design_layout">
+                    <legend><?php esc_html_e( 'Which design layout would you like to use?', 'twintack-custom-grips' ); ?> <span class="ttcg-required">(Required)</span></legend>
+                    <div class="ttcg-image-choice__grid ttcg-image-choice__grid--layouts">
+                        <?php foreach ( $layouts as $layout ) : ?>
+                            <label class="ttcg-image-choice__option">
+                                <input type="radio" name="design_layout" value="<?php echo esc_attr( $layout['value'] ); ?>" required>
+                                <span class="ttcg-image-choice__card">
+                                    <span class="ttcg-image-choice__image ttcg-image-choice__image--layout">
+                                        <img src="<?php echo esc_url( $layout['image'] ); ?>" alt="<?php echo esc_attr( $layout['label'] ); ?>" loading="lazy">
+                                    </span>
+                                    <span class="ttcg-image-choice__label"><?php echo esc_html( $layout['label'] ); ?></span>
+                                </span>
+                            </label>
+                        <?php endforeach; ?>
                     </div>
-                    <div class="ttcg-form-row">
-                        <label for="ttcg-intake-last_name"><?php esc_html_e( 'Last Name', 'twintack-custom-grips' ); ?> <span class="ttcg-required">*</span></label>
-                        <input type="text" id="ttcg-intake-last_name" name="last_name" class="ttcg-input" required
-                               value="<?php echo esc_attr( $current_user->last_name ); ?>">
+                </fieldset>
+
+                <fieldset class="ttcg-image-choice" data-color-group="primary">
+                    <legend><?php esc_html_e( 'Product Color', 'twintack-custom-grips' ); ?> <span class="ttcg-required">(Required)</span></legend>
+                    <div class="ttcg-image-choice__grid ttcg-image-choice__grid--colors">
+                        <?php foreach ( $colors as $color ) : ?>
+                            <label class="ttcg-image-choice__option">
+                                <input type="radio" name="primary_color" value="<?php echo esc_attr( $color['value'] ); ?>" required>
+                                <span class="ttcg-image-choice__card">
+                                    <span class="ttcg-image-choice__image ttcg-image-choice__image--color">
+                                        <img src="<?php echo esc_url( $color['image'] ); ?>" alt="<?php echo esc_attr( $color['label'] ); ?>" loading="lazy">
+                                    </span>
+                                    <span class="ttcg-image-choice__label"><?php echo esc_html( $color['label'] ); ?></span>
+                                </span>
+                            </label>
+                        <?php endforeach; ?>
                     </div>
-                    <div class="ttcg-form-row">
-                        <label for="ttcg-intake-email"><?php esc_html_e( 'Email', 'twintack-custom-grips' ); ?></label>
-                        <input type="email" id="ttcg-intake-email" class="ttcg-input" readonly
-                               value="<?php echo esc_attr( $current_user->user_email ); ?>">
+                </fieldset>
+
+                <fieldset class="ttcg-image-choice ttcg-intake-step__conditional" data-color-group="secondary" hidden>
+                    <legend><?php esc_html_e( 'Second Color', 'twintack-custom-grips' ); ?> <span class="ttcg-required">(Required)</span></legend>
+                    <div class="ttcg-image-choice__grid ttcg-image-choice__grid--colors">
+                        <?php foreach ( $colors as $color ) : ?>
+                            <label class="ttcg-image-choice__option">
+                                <input type="radio" name="secondary_color" value="<?php echo esc_attr( $color['value'] ); ?>">
+                                <span class="ttcg-image-choice__card">
+                                    <span class="ttcg-image-choice__image ttcg-image-choice__image--color">
+                                        <img src="<?php echo esc_url( $color['image'] ); ?>" alt="<?php echo esc_attr( $color['label'] ); ?>" loading="lazy">
+                                    </span>
+                                    <span class="ttcg-image-choice__label"><?php echo esc_html( $color['label'] ); ?></span>
+                                </span>
+                            </label>
+                        <?php endforeach; ?>
                     </div>
-                    <div class="ttcg-form-row">
-                        <label for="ttcg-intake-team_name"><?php esc_html_e( 'Team / School Name', 'twintack-custom-grips' ); ?> <span class="ttcg-required">*</span></label>
-                        <input type="text" id="ttcg-intake-team_name" name="team_name" class="ttcg-input" required>
+                </fieldset>
+
+                <fieldset class="ttcg-image-choice ttcg-intake-step__conditional" data-color-group="tertiary" hidden>
+                    <legend><?php esc_html_e( 'Third Color', 'twintack-custom-grips' ); ?> <span class="ttcg-required">(Required)</span></legend>
+                    <div class="ttcg-image-choice__grid ttcg-image-choice__grid--colors">
+                        <?php foreach ( $colors as $color ) : ?>
+                            <label class="ttcg-image-choice__option">
+                                <input type="radio" name="tertiary_color" value="<?php echo esc_attr( $color['value'] ); ?>">
+                                <span class="ttcg-image-choice__card">
+                                    <span class="ttcg-image-choice__image ttcg-image-choice__image--color">
+                                        <img src="<?php echo esc_url( $color['image'] ); ?>" alt="<?php echo esc_attr( $color['label'] ); ?>" loading="lazy">
+                                    </span>
+                                    <span class="ttcg-image-choice__label"><?php echo esc_html( $color['label'] ); ?></span>
+                                </span>
+                            </label>
+                        <?php endforeach; ?>
                     </div>
-                    <div class="ttcg-form-row">
-                        <label for="ttcg-intake-quantity"><?php esc_html_e( 'Estimated Quantity', 'twintack-custom-grips' ); ?> <span class="ttcg-required">*</span></label>
-                        <input type="number" id="ttcg-intake-quantity" name="quantity" class="ttcg-input"
-                               min="<?php echo esc_attr( TTCG_Intake::MIN_QUANTITY ); ?>"
-                               max="<?php echo esc_attr( TTCG_Intake::MAX_QUANTITY ); ?>"
-                               value="<?php echo esc_attr( TTCG_Intake::MIN_QUANTITY ); ?>" required>
-                    </div>
-                </div>
+                </fieldset>
             </div>
 
-            <div class="ttcg-customer-intake__section">
-                <h3 class="ttcg-customer-intake__section-title"><?php esc_html_e( 'Design Options', 'twintack-custom-grips' ); ?></h3>
-                <div class="ttcg-customer-intake__grid">
-                    <div class="ttcg-form-row ttcg-form-row--full">
-                        <label for="ttcg-intake-design_layout"><?php esc_html_e( 'Pattern / Layout', 'twintack-custom-grips' ); ?> <span class="ttcg-required">*</span></label>
-                        <select id="ttcg-intake-design_layout" name="design_layout" class="ttcg-input" required>
-                            <option value=""><?php esc_html_e( '— Select —', 'twintack-custom-grips' ); ?></option>
-                            <option value="Solid Color"><?php esc_html_e( 'Solid Color', 'twintack-custom-grips' ); ?></option>
-                            <option value="2-Color Fade"><?php esc_html_e( '2-Color Fade', 'twintack-custom-grips' ); ?></option>
-                            <option value="3-Color Fade"><?php esc_html_e( '3-Color Fade', 'twintack-custom-grips' ); ?></option>
-                            <option value="Splatter"><?php esc_html_e( 'Splatter', 'twintack-custom-grips' ); ?></option>
-                        </select>
-                    </div>
-                    <div class="ttcg-form-row" data-color-field="primary">
-                        <label for="ttcg-intake-primary_color"><?php esc_html_e( 'Primary Color', 'twintack-custom-grips' ); ?> <span class="ttcg-required">*</span></label>
-                        <input type="text" id="ttcg-intake-primary_color" name="primary_color" class="ttcg-input" required
-                               placeholder="<?php esc_attr_e( 'e.g., Navy, Red, Gold', 'twintack-custom-grips' ); ?>">
-                    </div>
-                    <div class="ttcg-form-row" data-color-field="secondary">
-                        <label for="ttcg-intake-secondary_color"><?php esc_html_e( 'Secondary Color', 'twintack-custom-grips' ); ?></label>
-                        <input type="text" id="ttcg-intake-secondary_color" name="secondary_color" class="ttcg-input">
-                    </div>
-                    <div class="ttcg-form-row" data-color-field="tertiary">
-                        <label for="ttcg-intake-tertiary_color"><?php esc_html_e( 'Tertiary Color', 'twintack-custom-grips' ); ?></label>
-                        <input type="text" id="ttcg-intake-tertiary_color" name="tertiary_color" class="ttcg-input">
-                    </div>
-                </div>
-            </div>
+            <!-- Step 2: Team, Logo, Instructions -->
+            <div class="ttcg-intake-step" data-step="2" hidden>
+                <h3 class="ttcg-intake-step__heading"><?php esc_html_e( 'Add Team Name, Logo, and Instructions', 'twintack-custom-grips' ); ?></h3>
 
-            <div class="ttcg-customer-intake__section">
-                <h3 class="ttcg-customer-intake__section-title"><?php esc_html_e( 'Logo & Instructions', 'twintack-custom-grips' ); ?></h3>
                 <div class="ttcg-form-row ttcg-form-row--full">
-                    <label for="ttcg-intake-artwork_file"><?php esc_html_e( 'Logo / Artwork Upload', 'twintack-custom-grips' ); ?></label>
-                    <p class="ttcg-customer-intake__hint"><?php esc_html_e( 'Upload your team logo or reference artwork (JPG, PNG, PDF, AI, EPS, SVG).', 'twintack-custom-grips' ); ?></p>
+                    <label for="ttcg-intake-team_name">
+                        <?php esc_html_e( 'Please provide your Team or School name (this will be used as the Design Name in our system):', 'twintack-custom-grips' ); ?>
+                        <span class="ttcg-required">(Required)</span>
+                    </label>
+                    <input type="text" id="ttcg-intake-team_name" name="team_name" class="ttcg-input ttcg-input--large" required>
+                </div>
+
+                <div class="ttcg-form-row ttcg-form-row--full">
+                    <label for="ttcg-intake-artwork_file">
+                        <?php esc_html_e( 'Please upload a high resolution logo (JPEG, PNG, PDF, AI or EPS)', 'twintack-custom-grips' ); ?>
+                    </label>
                     <input type="file" id="ttcg-intake-artwork_file" name="artwork_file" class="ttcg-input"
                            accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.ai,.eps,.svg">
+                    <p class="ttcg-customer-intake__hint">
+                        <?php
+                        printf(
+                            /* translators: %s: maximum upload size, e.g. 256 MB */
+                            esc_html__( 'Max. file size: %s.', 'twintack-custom-grips' ),
+                            esc_html( $max_upload_label )
+                        );
+                        ?>
+                    </p>
                 </div>
+
                 <div class="ttcg-form-row ttcg-form-row--full">
-                    <label for="ttcg-intake-feedback"><?php esc_html_e( 'Design Instructions', 'twintack-custom-grips' ); ?></label>
-                    <textarea id="ttcg-intake-feedback" name="feedback" rows="5" class="ttcg-input ttcg-textarea"
+                    <label for="ttcg-intake-feedback">
+                        <?php esc_html_e( 'Please provide your Team Colors or any other design direction:', 'twintack-custom-grips' ); ?>
+                    </label>
+                    <textarea id="ttcg-intake-feedback" name="feedback" rows="6" class="ttcg-input ttcg-textarea ttcg-input--large"
                               placeholder="<?php esc_attr_e( 'Placement notes, font preferences, special requests…', 'twintack-custom-grips' ); ?>"></textarea>
                 </div>
             </div>
 
-            <div class="ttcg-customer-intake__actions">
-                <button type="submit" class="ttcg-btn ttcg-btn--primary ttcg-btn--large" id="ttcg-intake-submit">
-                    <?php esc_html_e( 'Continue to Cart & Pay Deposit', 'twintack-custom-grips' ); ?>
-                </button>
-                <p class="ttcg-customer-intake__deposit-note">
-                    <?php esc_html_e( 'A one-time design deposit is required before our team begins your mockup.', 'twintack-custom-grips' ); ?>
+            <!-- Step 3: Quantity & Pricing -->
+            <div class="ttcg-intake-step" data-step="3" hidden>
+                <h3 class="ttcg-intake-step__heading"><?php esc_html_e( 'Quantity & Specs', 'twintack-custom-grips' ); ?></h3>
+
+                <?php echo TTCG_Intake_Config::get_design_fee_notice_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+
+                <div class="ttcg-form-row ttcg-form-row--full">
+                    <label for="ttcg-intake-quantity"><?php esc_html_e( 'Quantity', 'twintack-custom-grips' ); ?> <span class="ttcg-required">(Required)</span></label>
+                    <select id="ttcg-intake-quantity" name="quantity" class="ttcg-input ttcg-input--large" required>
+                        <?php foreach ( $quantities as $qty ) : ?>
+                            <option value="<?php echo esc_attr( $qty ); ?>" <?php selected( $qty, $default_qty ); ?>>
+                                <?php echo esc_html( (string) $qty ); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="ttcg-intake-pricing" id="ttcg-intake-pricing">
+                    <span class="ttcg-intake-pricing__label"><?php esc_html_e( 'Custom Grips', 'twintack-custom-grips' ); ?></span>
+                    <span class="ttcg-intake-pricing__row">
+                        <span class="ttcg-intake-pricing__prefix"><?php esc_html_e( 'Price:', 'twintack-custom-grips' ); ?></span>
+                        <span class="ttcg-intake-pricing__price" id="ttcg-intake-unit-price">
+                            <?php echo wp_kses_post( TTCG_Intake_Config::get_unit_price( $default_qty ) ); ?>
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Step 4: Customer Info -->
+            <div class="ttcg-intake-step" data-step="4" hidden>
+                <h3 class="ttcg-intake-step__heading"><?php esc_html_e( 'Customer Information', 'twintack-custom-grips' ); ?></h3>
+
+                <div class="ttcg-customer-intake__grid">
+                    <div class="ttcg-form-row">
+                        <label for="ttcg-intake-first_name"><?php esc_html_e( 'First Name', 'twintack-custom-grips' ); ?> <span class="ttcg-required">(Required)</span></label>
+                        <input type="text" id="ttcg-intake-first_name" name="first_name" class="ttcg-input ttcg-input--large" required
+                               value="<?php echo esc_attr( $current_user->first_name ); ?>">
+                    </div>
+                    <div class="ttcg-form-row">
+                        <label for="ttcg-intake-last_name"><?php esc_html_e( 'Last Name', 'twintack-custom-grips' ); ?> <span class="ttcg-required">(Required)</span></label>
+                        <input type="text" id="ttcg-intake-last_name" name="last_name" class="ttcg-input ttcg-input--large" required
+                               value="<?php echo esc_attr( $current_user->last_name ); ?>">
+                    </div>
+                    <div class="ttcg-form-row">
+                        <label for="ttcg-intake-email"><?php esc_html_e( 'Email', 'twintack-custom-grips' ); ?> <span class="ttcg-required">(Required)</span></label>
+                        <input type="email" id="ttcg-intake-email" class="ttcg-input ttcg-input--large" readonly
+                               value="<?php echo esc_attr( $current_user->user_email ); ?>">
+                    </div>
+                    <div class="ttcg-form-row">
+                        <label for="ttcg-intake-phone"><?php esc_html_e( 'Phone', 'twintack-custom-grips' ); ?> <span class="ttcg-required">(Required)</span></label>
+                        <input type="tel" id="ttcg-intake-phone" name="phone" class="ttcg-input ttcg-input--large" required
+                               value="<?php echo esc_attr( $billing_phone ); ?>">
+                    </div>
+                </div>
+
+                <p class="ttcg-customer-intake__hint ttcg-intake-checkout-note">
+                    <?php esc_html_e( 'Billing and shipping details will be collected at checkout.', 'twintack-custom-grips' ); ?>
                 </p>
+            </div>
+
+            <div class="ttcg-intake-wizard__footer">
+                <button type="button" class="ttcg-btn ttcg-btn--nav" id="ttcg-intake-prev" hidden>
+                    <?php esc_html_e( 'Previous', 'twintack-custom-grips' ); ?>
+                </button>
+                <button type="button" class="ttcg-btn ttcg-btn--nav ttcg-btn--primary" id="ttcg-intake-next">
+                    <?php esc_html_e( 'Next', 'twintack-custom-grips' ); ?>
+                </button>
+                <button type="submit" class="ttcg-btn ttcg-btn--nav ttcg-btn--primary" id="ttcg-intake-submit" hidden>
+                    <?php esc_html_e( 'Add to Cart', 'twintack-custom-grips' ); ?>
+                </button>
             </div>
 
             <div class="ttcg-customer-intake__feedback" id="ttcg-intake-feedback" role="alert" aria-live="polite"></div>

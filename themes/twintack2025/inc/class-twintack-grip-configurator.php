@@ -91,7 +91,7 @@ class TwinTack_Grip_Configurator {
             });
             
             // Check for any form-related content that might indicate this is the grip configurator
-            var formElements = document.querySelectorAll('form, .ttcg-customer-intake, #ttcg-customer-intake-form, .gform_wrapper, .gform_body');
+            var formElements = document.querySelectorAll('form, .ttcg-customer-intake, #ttcg-customer-intake-form');
             
             // Check for any element containing "custom grip" text
             var customGripElements = Array.from(document.querySelectorAll('*')).filter(function(el) {
@@ -106,7 +106,6 @@ class TwinTack_Grip_Configurator {
                                  document.querySelector('.content') ||
                                  document.querySelector('main') ||
                                  document.querySelector('#ttcg-customer-intake-form') ||
-                                 document.querySelector('.gform_wrapper') ||
                                  document.querySelector('form');
                                  
                 if (insertTarget && !document.querySelector('.twintack-grip-registration-prompt') && 
@@ -118,7 +117,7 @@ class TwinTack_Grip_Configurator {
                     // Insert after the target element
                     if (accountRequiredElements[0]) {
                         accountRequiredElements[0].insertAdjacentHTML('afterend', registrationHtml);
-                    } else if (insertTarget.tagName === 'FORM' || insertTarget.className.includes('gform')) {
+                    } else if (insertTarget.tagName === 'FORM') {
                         insertTarget.insertAdjacentHTML('beforebegin', registrationHtml);
                     } else {
                         insertTarget.insertAdjacentHTML('beforeend', registrationHtml);
@@ -151,7 +150,6 @@ class TwinTack_Grip_Configurator {
         
         // Additional checks for common form page patterns
         if ($post && (
-            strpos($post->post_content, '[gravityform') !== false ||
             strpos($post->post_content, 'custom grip') !== false ||
             strpos(strtolower($post->post_title), 'grip') !== false
         )) {

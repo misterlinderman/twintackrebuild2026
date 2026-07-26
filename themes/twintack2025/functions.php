@@ -456,34 +456,6 @@ function twintack_isolate_grip_form_scripts() {
 }
 add_action('template_redirect', 'twintack_isolate_grip_form_scripts');
 
-// Gravity Forms 2.9.18 Script Optimization Exclusions
-add_action('init', function() {
-    // Exclude Gravity Forms scripts from optimization plugins
-    if (class_exists('GFForms')) {
-        // WP Rocket exclusions
-        add_filter('rocket_exclude_js', function($excluded_js) {
-            $excluded_js[] = 'gravityforms';
-            $excluded_js[] = 'gform_';
-            $excluded_js[] = 'conditional_logic';
-            return $excluded_js;
-        });
-        
-        // Autoptimize exclusions
-        add_filter('autoptimize_filter_js_exclude', function($excluded_js) {
-            $excluded_js .= ',gravityforms,gform_,conditional_logic';
-            return $excluded_js;
-        });
-        
-        // W3 Total Cache exclusions
-        add_filter('w3tc_minify_js_ignore', function($ignored_js) {
-            $ignored_js[] = 'gravityforms';
-            $ignored_js[] = 'gform_';
-            $ignored_js[] = 'conditional_logic';
-            return $ignored_js;
-        });
-    }
-});
-
 // Admin console fixes moved to plugin: twintack-admin-console-fixes
 
 /**

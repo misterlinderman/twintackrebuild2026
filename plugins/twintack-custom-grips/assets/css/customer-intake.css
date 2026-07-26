@@ -1,38 +1,279 @@
 /**
- * Customer native grip intake form styles.
+ * Customer native grip intake wizard — production GF configurator parity.
  *
  * @package TwinTack_Custom_Grips
- * @since   1.3.0
+ * @since   1.4.0
  */
 
-.ttcg-customer-intake {
-    max-width: 720px;
+/* Hide duplicate page title when the wizard renders its own heading */
+body.ttcg-grip-intake-page .entry-header,
+body.ttcg-grip-intake-page .entry-content > h1:first-of-type,
+body.ttcg-grip-intake-page .entry-content > h2:first-of-type {
+    display: none;
+}
+
+.ttcg-customer-intake--wizard {
+    --ttcg-bg: transparent;
+    --ttcg-bg-card: var(--color-accent, #333333);
+    --ttcg-bg-image: rgba(0, 0, 0, 0.35);
+    --ttcg-text: var(--color-text, #fff);
+    --ttcg-text-muted: var(--color-text-muted, #ccc);
+    --ttcg-highlight: var(--color-highlight, #ff0b00);
+    --ttcg-primary: var(--color-primary, #000);
+    --ttcg-border: rgba(255, 255, 255, 0.08);
+    --ttcg-check: #0073aa;
+    --ttcg-radius: 4px;
+    --ttcg-card-pad: 10px;
+
+    max-width: 960px;
     margin: 0 auto;
-    font-family: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    padding: 0;
+    background: transparent;
+    color: var(--ttcg-text);
+    font-family: 'Saira Condensed', 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .ttcg-customer-intake__login-notice {
     text-align: center;
     padding: 2rem;
-    background: #1a1a1a;
-    color: #fff;
-    border-radius: 8px;
 }
 
-.ttcg-customer-intake__section {
-    margin-bottom: 1.75rem;
-    padding: 1.25rem;
-    background: #f8f9fa;
-    border: 1px solid #e2e4e7;
-    border-radius: 8px;
+/* Header & progress */
+.ttcg-intake-wizard__header {
+    margin-bottom: 1.25rem;
 }
 
-.ttcg-customer-intake__section-title {
-    margin: 0 0 1rem;
-    font-size: 1.125rem;
-    font-weight: 700;
+.ttcg-intake-wizard__title {
+    margin: 0 0 0.35rem;
+    font-size: 2.25rem;
+    font-weight: 900;
+    font-style: italic;
     text-transform: uppercase;
-    letter-spacing: 0.02em;
+    letter-spacing: -0.02em;
+    color: var(--ttcg-text);
+    line-height: 1.1;
+}
+
+.ttcg-intake-wizard__step-label {
+    margin: 0 0 0.65rem;
+    font-size: 1rem;
+    color: var(--ttcg-text-muted);
+}
+
+.ttcg-intake-wizard__progress {
+    height: 10px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: var(--ttcg-radius);
+    overflow: hidden;
+}
+
+.ttcg-intake-wizard__progress-bar {
+    height: 100%;
+    background: var(--ttcg-highlight);
+    transition: width 0.3s ease;
+}
+
+/* Steps */
+.ttcg-intake-step__heading {
+    margin: 0 0 1rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--ttcg-text);
+}
+
+.ttcg-intake-step[hidden] {
+    display: none !important;
+}
+
+/* Image choice fields */
+.ttcg-image-choice {
+    border: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+}
+
+.ttcg-image-choice legend {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.65rem;
+    padding: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--ttcg-text);
+}
+
+.ttcg-image-choice__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.ttcg-image-choice__grid--layouts .ttcg-image-choice__option {
+    flex: 0 0 calc(50% - 2px);
+    max-width: calc(50% - 2px);
+}
+
+.ttcg-image-choice__grid--colors .ttcg-image-choice__option {
+    flex: 0 0 calc((100% - 21px) / 8);
+    max-width: calc((100% - 21px) / 8);
+}
+
+.ttcg-image-choice__option {
+    cursor: pointer;
+    margin: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+/* Visually hidden — selection shown via card checkmark (GF parity) */
+.ttcg-image-choice__option input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.ttcg-image-choice__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--ttcg-bg-card);
+    border: 1px solid var(--ttcg-border);
+    border-radius: var(--ttcg-radius);
+    padding: var(--ttcg-card-pad);
+    padding-bottom: 8px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    min-width: 0;
+    flex: 1;
+    box-sizing: border-box;
+}
+
+.ttcg-image-choice__option:hover .ttcg-image-choice__card {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.ttcg-image-choice__option input:checked + .ttcg-image-choice__card {
+    border-color: var(--ttcg-check);
+    box-shadow: 0 0 0 1px var(--ttcg-check);
+}
+
+.ttcg-image-choice__option input:checked + .ttcg-image-choice__card::after {
+    content: '';
+    position: absolute;
+    top: calc(var(--ttcg-card-pad) + 4px);
+    right: calc(var(--ttcg-card-pad) + 4px);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--ttcg-check);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 14px;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.ttcg-image-choice__image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    width: 100%;
+    background: transparent;
+    border-radius: calc(var(--ttcg-radius) - 1px);
+}
+
+.ttcg-image-choice__image--layout {
+    height: 130px;
+    margin-bottom: 6px;
+}
+
+.ttcg-image-choice__image--layout img {
+    width: 170px;
+    max-height: 170px;
+    transform: rotate(-90deg);
+    object-fit: contain;
+    display: block;
+    padding: 1rem 0;
+}
+
+.ttcg-image-choice__image--color {
+    width: 100%;
+    height: 90px;
+    margin-bottom: 4px;
+}
+
+.ttcg-image-choice__image--color img {
+    width: 70px;
+    object-fit: contain;
+    display: block;
+    padding: 0.5rem;
+}
+
+.ttcg-image-choice__label {
+    margin: 0;
+    padding: 0;
+    font-size: 1rem;
+    color: var(--ttcg-text);
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* Text fields */
+.ttcg-form-row {
+    margin-bottom: 1.25rem;
+}
+
+.ttcg-form-row label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--ttcg-text);
+    line-height: 1.35;
+}
+
+.ttcg-required {
+    color: var(--ttcg-highlight);
+    font-weight: 600;
+}
+
+.ttcg-input,
+.ttcg-textarea {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid #ccc;
+    border-radius: var(--ttcg-radius);
+    font-size: 1rem;
+    box-sizing: border-box;
+    background: #fff;
+    color: #1a1a1a;
+}
+
+.ttcg-input--large,
+.ttcg-textarea.ttcg-input--large {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.ttcg-input:focus,
+.ttcg-textarea:focus {
+    outline: 2px solid var(--ttcg-highlight);
+    border-color: var(--ttcg-highlight);
+}
+
+.ttcg-input[readonly] {
+    background: #eee;
+    color: #555;
 }
 
 .ttcg-customer-intake__grid {
@@ -45,48 +286,90 @@
     grid-column: 1 / -1;
 }
 
-.ttcg-form-row label {
-    display: block;
-    margin-bottom: 0.35rem;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.ttcg-required {
-    color: #c0392b;
-}
-
-.ttcg-input,
-.ttcg-textarea {
-    width: 100%;
-    padding: 0.6rem 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-    box-sizing: border-box;
-}
-
-.ttcg-input:focus,
-.ttcg-textarea:focus {
-    outline: 2px solid #1a1a1a;
-    border-color: #1a1a1a;
-}
-
-.ttcg-input[readonly] {
-    background: #eee;
-    color: #555;
-}
-
-.ttcg-customer-intake__hint,
-.ttcg-customer-intake__deposit-note {
+.ttcg-customer-intake__hint {
     margin: 0.35rem 0 0;
-    font-size: 0.875rem;
-    color: #555;
+    font-size: 0.95rem;
+    color: var(--ttcg-text-muted);
 }
 
-.ttcg-customer-intake__actions {
-    text-align: center;
-    margin-top: 1.5rem;
+.ttcg-intake-checkout-note {
+    margin-top: 1rem;
+    font-style: italic;
+    font-size: 1rem;
+}
+
+/* Design fee notice */
+.ttcg-design-fee-notice {
+    margin-bottom: 1.5rem;
+    padding: 0;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    color: var(--ttcg-text);
+}
+
+.ttcg-design-fee-notice h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1.35rem;
+    color: var(--ttcg-text);
+}
+
+.ttcg-design-fee-notice ul {
+    margin: 0.5rem 0 1rem 1.25rem;
+    padding: 0;
+}
+
+.ttcg-design-fee-notice__small {
+    font-size: 1rem;
+    color: var(--ttcg-text-muted);
+}
+
+/* Pricing display — matches GF product field */
+.ttcg-intake-pricing {
+    margin-top: 1.25rem;
+}
+
+.ttcg-intake-pricing__label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ttcg-text);
+    margin-bottom: 0.15rem;
+}
+
+.ttcg-intake-pricing__row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.ttcg-intake-pricing__prefix {
+    font-size: 1rem;
+    color: var(--ttcg-highlight);
+    font-weight: 600;
+}
+
+.ttcg-intake-pricing__price {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--ttcg-highlight);
+    line-height: 1;
+}
+
+.ttcg-intake-pricing__price .woocommerce-Price-amount {
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+/* Footer navigation */
+.ttcg-intake-wizard__footer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    margin-bottom: 3rem;
 }
 
 .ttcg-btn {
@@ -94,23 +377,29 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
+    padding: 0.65rem 1.5rem;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--ttcg-radius);
     font-weight: 700;
+    font-size: 1.2rem;
     text-decoration: none;
     cursor: pointer;
-    font-size: 1rem;
+    font-family: inherit;
+}
+
+.ttcg-btn--nav {
+    background: var(--ttcg-highlight);
+    color: var(--ttcg-primary);
+}
+
+.ttcg-btn--nav:hover {
+    background: var(--ttcg-text);
+    color: var(--ttcg-primary);
 }
 
 .ttcg-btn--primary {
-    background: #1a1a1a;
-    color: #fff;
-}
-
-.ttcg-btn--primary:hover {
-    background: #333;
-    color: #fff;
+    background: var(--ttcg-highlight);
+    color: var(--ttcg-primary);
 }
 
 .ttcg-btn--primary:disabled {
@@ -118,15 +407,30 @@
     cursor: not-allowed;
 }
 
-.ttcg-btn--large {
-    padding: 1rem 2rem;
-    font-size: 1.05rem;
+#ttcg-intake-submit {
+    background: var(--ttcg-text);
+    color: var(--ttcg-primary);
+    font-size: 2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding: 0.3em 1em;
+    max-width: 50%;
 }
 
+#ttcg-intake-submit:hover {
+    background: var(--ttcg-highlight);
+    color: var(--ttcg-primary);
+}
+
+.ttcg-btn[hidden] {
+    display: none !important;
+}
+
+/* Feedback */
 .ttcg-customer-intake__feedback {
     margin-top: 1rem;
     padding: 0.75rem 1rem;
-    border-radius: 4px;
+    border-radius: var(--ttcg-radius);
     display: none;
 }
 
@@ -135,19 +439,58 @@
 }
 
 .ttcg-customer-intake__feedback--error {
-    background: #fdecea;
-    color: #c0392b;
-    border: 1px solid #f5c6cb;
+    background: rgba(255, 11, 0, 0.15);
+    color: #ff8a80;
+    border: 1px solid rgba(255, 11, 0, 0.4);
 }
 
 .ttcg-customer-intake__feedback--success {
-    background: #e8f5e9;
-    color: #2e7d32;
-    border: 1px solid #c8e6c9;
+    background: rgba(46, 125, 50, 0.2);
+    color: #81c784;
+    border: 1px solid rgba(46, 125, 50, 0.4);
 }
 
-@media (max-width: 640px) {
+.ttcg-intake-step__field-error {
+    color: var(--ttcg-highlight);
+    font-size: 0.95rem;
+    margin-top: 0.35rem;
+}
+
+@media (min-width: 769px) {
+    .ttcg-image-choice__grid--layouts .ttcg-image-choice__option {
+        flex: 0 0 calc(25% - 3px);
+        max-width: calc(25% - 3px);
+    }
+}
+
+@media (max-width: 768px) {
+    .ttcg-customer-intake--wizard {
+        padding: 1rem;
+    }
+
+    .ttcg-intake-wizard__title {
+        font-size: 1.65rem;
+    }
+
+    .ttcg-image-choice__grid--colors .ttcg-image-choice__option {
+        flex: 0 0 calc((100% - 6px) / 3);
+        max-width: calc((100% - 6px) / 3);
+    }
+
+    .ttcg-image-choice__image--layout {
+        height: 110px;
+    }
+
+    .ttcg-image-choice__image--layout img {
+        width: 140px;
+    }
+
     .ttcg-customer-intake__grid {
         grid-template-columns: 1fr;
+    }
+
+    #ttcg-intake-submit {
+        max-width: 100%;
+        font-size: 1.5rem;
     }
 }

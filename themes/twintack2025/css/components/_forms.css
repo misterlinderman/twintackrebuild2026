@@ -6,15 +6,6 @@
     margin: calc(var(--spacing-unit) * 2) 0;
 }
 
-/* Gravity Forms Overrides */
-.gform_wrapper {
-    margin: 0 !important;
-}
-
-.gfield {
-    margin-bottom: var(--spacing-unit) !important;
-}
-
 /* Form Fields */
 .form-field {
     margin-bottom: var(--spacing-unit);

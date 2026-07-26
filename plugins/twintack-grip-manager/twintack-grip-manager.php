@@ -2,7 +2,7 @@
 /**
  * Plugin Name: TwinTack Grip Manager
  * Description: Grip design post type, WooCommerce order bridge, and cart helpers. Production workflow lives in twintack-custom-grips.
- * Version: 1.7.06
+ * Version: 1.7.07
  * Author: TwinTack Team
  * Requires at least: 5.8
  * Requires PHP: 7.4
@@ -43,12 +43,7 @@ class TwinTack_Grip_Manager {
             return;
         }
 
-        // Gravity Forms is optional (legacy intake); native form lives in Custom Grips.
-        if (!class_exists('GFAPI')) {
-            add_action('admin_notices', array($this, 'gravityforms_missing_notice'));
-        }
-        
-        // Load dependencies after confirming requirements are met
+        // Load dependencies after confirming requirements are met.
         require_once plugin_dir_path(__FILE__) . 'includes/class-grip-post-type.php';
         require_once plugin_dir_path(__FILE__) . 'includes/class-grip-form-handler.php';
         require_once plugin_dir_path(__FILE__) . 'includes/class-grip-admin.php';
@@ -142,14 +137,6 @@ class TwinTack_Grip_Manager {
         ?>
         <div class="error">
             <p><?php _e('TwinTack Grip Manager requires WooCommerce to be installed and activated.', 'twintack-grip-manager'); ?></p>
-        </div>
-        <?php
-    }
-    
-    public function gravityforms_missing_notice() {
-        ?>
-        <div class="notice notice-warning">
-            <p><?php _e('TwinTack Grip Manager: Gravity Forms is not active. Legacy form intake and GF import are disabled; native intake and WooCommerce cart/order handling still run.', 'twintack-grip-manager'); ?></p>
         </div>
         <?php
     }
